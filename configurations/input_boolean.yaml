@@ -1,0 +1,129 @@
+sleepmode:
+  name: Schlafmodus
+  initial: off
+  icon: mdi:sleep
+home_office:
+  name: Home Office/Urlaub Zuhause
+  initial: off
+holiday:
+  name: Urlaub - Nicht zuhause
+  initial: off
+show_extra_switches:
+  name: Zeige Zusatz Schalter
+  initial: off
+cleaning_mode:
+  name: Reinigungs Modus
+  initial: off
+window_open_check:
+  name: Fenster Offen Check
+  initial: on
+washing_machine_switch:
+  name: Waschmaschine fertig
+washing_machine_running:
+  initial: off
+disable_sleepmode:
+  name: Schlafmodus Timer Verhindern
+  initial: off
+skysphone_fully_charged:
+  name: Skysphone vollstädig geladen
+  initial: off
+sync_colors:
+  name: Farben synchronisieren
+  initial: off
+server_shutdown_overwrite:
+  name: Server Shutdown überbrücken
+  initial: off
+elitsa_home_fallback_button:
+  name: Elitsa Home Fallback
+  initial: off
+silent_messages_only:
+  name: Meldungen ohne Sprachausgabe
+  initial: off
+
+someone_in_kitchen:
+  name: Jemand in Küche
+  initial: off
+someone_in_bedroom:
+  name: Jemand in Schlafzimmer
+  initial: off
+someone_in_bathroom:
+  name: Jemand in Badezimmer
+  initial: off
+bathroom_status_blocker:
+  name: Badezimmer Status Blocker
+  initial: off
+someone_in_living:
+  name: Jemand im Wohnzimmer
+  initial: off
+someone_in_floor:
+  name: Jemand in Flur
+  initial: off
+someone_in_workingroom:
+  name: Jemand in Arbeitszimmer
+  initial: off
+someone_in_guestroom:
+  name: Jemand in Gäste WC
+  initial: off
+someone_in_storageroom:
+  name: Jemand in Abstellraum
+  initial: off
+
+force_occupied_kitchen:
+  name: Küche occupied erzwingen
+  initial: off
+force_occupied_living:
+  name: Wohnzimmer occupied erzwingen
+  initial: off
+force_occupied_bathroom:
+  name: Badezimmer occupied erzwingen
+  initial: off
+force_occupied_workingroom:
+  name: Arbeitszimmer occupied erzwingen
+  initial: off
+force_occupied_bedroom:
+  name: Schlafzimmer occupied erzwingen
+  initial: off
+
+force_light_off_kitchen:
+  name: Küche Licht aus erzwingen
+  initial: off
+force_light_off_living:
+  name: Wohnzimmer Licht aus erzwingen
+  initial: off
+force_light_off_bathroom:
+  name: Badezimmer Licht aus erzwingen
+  initial: off
+force_light_off_workingroom:
+  name: Arbeitszimmer Licht aus erzwingen
+  initial: off
+force_light_off_bedroom:
+  name: Schlafzimmer Licht aus erzwingen
+  initial: off
+
+coffee_timer_active:
+  name: Timer Aktiv
+  initial: off
+  icon: mdi:power
+automatic_charging_control:
+  name: Automatisch abschalten
+  initial: on
+  icon: mdi:power-settings
+
+rollo_automatik_kueche:
+  name: Rollo Automatik Küche
+  initial: on
+rollo_automatik_balkon:
+  name: Rollo Automatik Balkon
+  initial: on
+rollo_automatik_wohnzimmer:
+  name: Rollo Automatik wohnzimmer
+  initial: on
+rollo_automatik_badezimmer:
+  name: Rollo Automatik Badezimmer
+  initial: on
+rollo_automatik_arbeitszimmer:
+  name: Rollo Automatik Arbeitzimmer
+  initial: on
+rollo_automatik_schlafzimmer:
+  name: Rollo Automatik Schlafzimmer
+  initial: on

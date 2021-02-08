@@ -1,0 +1,195 @@
+living_light:
+  name: Wohnzimmer Licht
+  entities:
+    - switch.living_main_light_switch
+    - switch.wohnzimmer_stehlicht_schalter
+
+bedroom_light:
+  name: Schlafzimmer Licht
+  entities:
+    - switch.bedroom_main_light_switch
+
+kitchen_light:
+  name: Küche Licht
+  entities:
+    - switch.kitchen_main_light_switch
+    - switch.kuche_schranklicht_schalter
+
+charger:
+  name: Ladegeräte
+  entities:
+    - switch.charger_relay
+    - switch.power_charger_relay
+
+floor_light:
+  name: Flur Licht
+  entities:
+    - switch.floor_main_switch_switch
+    - switch.large_floor_main_light
+
+bathroom_light:
+  name: Badezimmer Licht
+  entities:
+    - switch.bathroom_shower_light_switch
+    - switch.bathroom_main_light_switch
+
+guestroom_light:
+  name: Gäste WC Licht
+  entities:
+    - switch.guest_main_light_switch
+
+workingroom_light:
+  name: Arbeitszimmer Licht
+  entities:
+    - light.stehlicht
+    - switch.workingroom_light_switch
+
+all_light:
+  name: Alle Licht
+  entities:
+    - group.living_light
+    - group.bedroom_light
+    - group.kitchen_light
+    - group.bathroom_light
+    - group.workingroom_light
+    - group.floor_light
+
+bedroom_all:
+  name: Schalzimmer alles aus
+  entities:
+    - switch.bedroom_main_light_switch
+    - switch.bedroom_tv_switch_switch
+
+living_all:
+  name: Wohnzimmer alles
+  entities:
+    - group.living_light
+    #- switch.living_entertain_switch_switch
+    - switch.wohnzimmer_tv_relay
+    - switch.wohnzimmer_entertainment
+    - switch.living_beamer_switch
+
+kitchen_all:
+  name: Küchen alles
+  entities:
+    - group.kitchen_light
+
+workingroom_all:
+  name: Arbeitszimmer alles
+  entities:
+    - group.workingroom_light
+    - switch.arbeitszimmer_tv_relay
+
+bathroom_all:
+  name: Badezimmer alles
+  entities:
+    - group.bathroom_light
+
+
+sleepmode_all_but_bedroom:
+  name: Schlafmodus ausser Schlafzimmer
+  entities:
+    - input_boolean.sleepmode_floor
+    - input_boolean.sleepmode_kitchen
+    - input_boolean.sleepmode_bathroom
+    - input_boolean.sleepmode_living
+    - input_boolean.sleepmode_workingroom
+    - input_boolean.sleepmode_guestroom
+
+
+batterie:
+  name: Batterie Status
+  entities:
+    - sensor.battery_floor_multi_sensor
+    - sensor.battery_floor_door
+    - sensor.battery_bathroom_multi_sensor
+    - sensor.battery_bathroom_window
+    - sensor.battery_bathroom_heating
+    - sensor.battery_bedroom_multi_sensor
+    - sensor.battery_bedroom_window
+    - sensor.battery_bedroom_heating
+    - sensor.battery_kitchen_multi_sensor
+    - sensor.battery_kitchen_window
+    - sensor.battery_kitchen_heating
+    - sensor.battery_living_multi_sensor
+    - sensor.battery_living_window
+    - sensor.battery_living_heating
+    - sensor.battery_living_canvas
+
+sleepmode:
+  name: Raum Sleepmode Status
+  entities:
+    - input_boolean.sleepmode_bedroom
+    - input_boolean.sleepmode_bathroom
+    - input_boolean.sleepmode_floor
+    - input_boolean.sleepmode_kitchen
+    - input_boolean.sleepmode_living
+    - input_boolean.sleepmode_workingroom
+    - input_boolean.sleepmode_guestroom
+
+rollo_automatik:
+  name: Rollo Automatik
+  entities:
+    - input_boolean.rollo_automatik_kueche
+    - input_boolean.rollo_automatik_balkon
+    - input_boolean.rollo_automatik_wohnzimmer
+    - input_boolean.rollo_automatik_badezimmer
+    - input_boolean.rollo_automatik_arbeitszimmer
+    - input_boolean.rollo_automatik_schlafzimmer
+
+rollo_automatik_not bedroom:
+  name: Rollo Automatik ausser Schlafzimmer
+  entities:
+    - input_boolean.rollo_automatik_kueche
+    - input_boolean.rollo_automatik_balkon
+    - input_boolean.rollo_automatik_wohnzimmer
+    - input_boolean.rollo_automatik_badezimmer
+    - input_boolean.rollo_automatik_arbeitszimmer
+
+someone_in:
+  name: Raum besetzt
+  entities:
+    - input_boolean.someone_in_kitchen
+    - input_boolean.someone_in_living
+    - input_boolean.someone_in_bathroom
+    - input_boolean.someone_in_workingroom
+    - input_boolean.someone_in_bedroom
+    - input_boolean.someone_in_guestroom
+
+force_light_off:
+  name: Erzwinge Licht aus
+  entities:
+    - input_boolean.force_light_off_kitchen
+    - input_boolean.force_light_off_living
+    - input_boolean.force_light_off_bathroom
+    - input_boolean.force_light_off_workingroom
+    - input_boolean.force_light_off_bedroom
+
+force_occupied:
+  name: Erzwinge Licht an
+  entities:
+    - input_boolean.force_occupied_kitchen
+    - input_boolean.force_occupied_living
+    - input_boolean.force_occupied_bathroom
+    - input_boolean.force_occupied_workingroom
+    - input_boolean.force_occupied_bedroom
+
+
+tvs:
+  name: Fehrnseher
+  entities:
+    - switch.wohnzimmer_entertainment
+    - switch.arbeitszimmer_tv_relay
+    - switch.bedroom_tv_switch_switch
+
+workingroom_desk_power:
+  name: Schreibtisch Strom
+  entities:
+    - switch.laptop_relay
+    - switch.monitor_relay
+
+other_light:
+  name: Abstellkammer und GästeWC Licht
+  entities:
+    - light.abstellraum
+    - switch.guest_main_light_switch

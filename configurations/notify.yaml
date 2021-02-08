@@ -1,0 +1,42 @@
+- name: Server
+  platform: telegram
+  chat_id: !secret telegram_server_client_id
+- name: Wohnung
+  platform: telegram
+  chat_id: !secret telegram_wohnung_client_id
+- name: Kitchen_Tablet
+  platform: slack
+  api_key: !secret slack_skybot_hassgroup
+  default_channel: '#general'
+
+- name: devices_christian
+  platform: group
+  services:
+    - service: mobile_app_skysphone
+    - service: mobile_app_skyspad
+    - service: mobile_app_christians_macbook_pro_2
+
+- name: devices_elitsa
+  platform: group
+  services:
+    - service: mobile_app_iphone
+
+- name: devices_all
+  platform: group
+  services:
+    - service: mobile_app_skysphone
+    - service: mobile_app_skyspad
+    - service: mobile_app_iphone
+    - service: mobile_app_christians_macbook_pro_2
+
+- name: send_to_input_text
+  platform: command_line
+  command: "/bin/bash /config/fake_message.sh"
+
+- platform: nfandroidtv
+  name: Wohnzimmer FireTV 4k
+  host: 192.168.1.40
+
+- platform: nfandroidtv
+  name: Schlafzimmer FireTV
+  host: 192.168.1.34

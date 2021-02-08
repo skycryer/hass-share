@@ -1,0 +1,79 @@
+- name: Alles aus
+  entities:
+    switch.living_main_light_switch: false
+    light.stehlampe: false
+    switch.living_entertain_switch_switch: false
+    switch.living_popcorn_switch_switch: false
+    switch.kitchen_main_light_switch: false
+    switch.floor_main_switch_switch: false
+    switch.living_sidelamp_switch_switch: false
+    group.candles: false
+    switch.kitchen_wallplug_1_switch: false
+    switch.bedroom_main_light_switch: false
+    switch.nintendo_switch_power: false
+    switch.living_xbox_switch_switch: false
+  id: 428606b4bb584e1a9e0c6cff2ecc1b16
+- name: Romantic
+  entities:
+    switch.kitchen_main_light_switch: false
+    switch.living_main_light_switch: false
+    light.stehlampe: true
+    switch.living_sidelamp_switch_switch: true
+    switch.living_entertain_switch_switch: true
+    light.kitchen_underground_switch_level_2: true
+    input_boolean.random_color: false
+    script.set_romantic_on: true
+    group.candles: true
+  id: 3ad74cbadc5c4fd29bb3964f15463cbe
+- id: '1603129778161'
+  name: zocken
+  entities:
+    switch.arbeitszimmer_tv_relay:
+      friendly_name: Arbeitszimmer TV relay
+      icon: mdi:television
+      state: 'on'
+    zwave.workingroom_light:
+      node_id: 87
+      node_name: working_room_light
+      manufacturer_name: FIBARO System
+      product_name: FGS223 Double Relay
+      query_stage: CacheLoad
+      is_awake: true
+      is_ready: false
+      is_failed: false
+      is_info_received: true
+      max_baud_rate: 40000
+      is_zwave_plus: true
+      capabilities:
+      - zwave_plus
+      - listening
+      - routing
+      - beaming
+      sentCnt: 9
+      sentFailed: 4
+      retries: 0
+      receivedCnt: 5
+      receivedDups: 1
+      receivedUnsolicited: 3
+      sentTS: '2020-10-19 19:48:59:743 '
+      receivedTS: '2020-10-19 19:49:00:044 '
+      lastRequestRTT: 177
+      averageRequestRTT: 122
+      lastResponseRTT: 302
+      averageResponseRTT: 216
+      application_version: Unknown
+      friendly_name: workingroom_light
+      state: initializing
+    switch.workingroom_light_switch:
+      node_id: 87
+      value_index: 0
+      value_instance: 1
+      value_id: '72057595502346240'
+      power_consumption: 206.4
+      friendly_name: workingroom_light Switch
+      state: 'on'
+    light.stehlicht:
+      brightness: 78
+      friendly_name: Stehlicht Arbeitszimmer
+      supported_features: 41
+      state: 'on'

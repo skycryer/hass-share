@@ -1,0 +1,21 @@
+title: Hass
+order:
+  - item: logbook
+    hide: true
+  - item: history
+    hide: true
+  - item: Logbuch
+    hide: true
+  - item: Verlauf
+    hide: true
+exceptions:
+  - user: christian
+    order:
+      - item: logbook
+        hide: false
+      - item: Logbuch
+        hide: false
+      - item: history
+        hide: false
+      - item: Verlauf
+        hide: false

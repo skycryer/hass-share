@@ -1,0 +1,446 @@
+- platform: openweathermap
+  api_key: !secret openweathermap_api
+  language: de
+  monitored_conditions:
+    - weather
+    - temperature
+    - clouds
+    - rain
+    - snow
+
+- platform: time_date
+  display_options:
+    - time
+- platform: command_line
+  name: 'Plex App Status'
+  scan_interval: 5
+  command: 'curl -X GET http://192.168.1.22:8001/api/v2/applications/kIciSQlYEM.plex'
+  value_template: '{{ value_json.running }}'
+- platform: command_line
+  name: 'Youtube App Running'
+  scan_interval: 5
+  command: 'curl -X GET http://192.168.1.22:8001/api/v2/applications/111299001912'
+  value_template: '{{ value_json.running }}'
+- platform: command_line
+  name: 'Youtube App Visible'
+  scan_interval: 5
+  command: 'curl -X GET http://192.168.1.22:8001/api/v2/applications/111299001912'
+  value_template: '{{ value_json.visible }}'
+- platform: command_line
+  name: 'Netflix App Visible'
+  scan_interval: 5
+  command: 'curl -X GET http://192.168.1.22:8001/api/v2/applications/1221200001'
+  value_template: '{{ value_json.visible }}'
+- platform: command_line
+  name: 'Samsung TV Living Visible'
+  scan_interval: 2
+  command: 'curl -m 3 -s 192.168.1.22:8001/api/v2/ > /dev/null && echo ON || echo OFF'
+
+- platform: command_line
+  name: 'Wohnzimmer Absolute Luftfeuchtigkeit'
+  command: 'curl "http://192.168.1.2/luftfeuchte.php?temp={{ states("sensor.humidity_wohnzimmer_4") }}&pressure={{ states("sensor.humidity_wohnzimmer_5")  }}"'
+  unit_of_measurement: 'g/m³'
+- platform: command_line
+  name: 'Badezimmer Absolute Luftfeuchtigkeit'
+  command: 'curl "http://192.168.1.2/luftfeuchte.php?temp={{ states("sensor.humidity_badezimmer") }}&pressure={{ states("sensor.humidity_badezimmer_2")  }}"'
+  unit_of_measurement: 'g/m³'
+- platform: command_line
+  name: 'Arbeitszimmer Absolute Luftfeuchtigkeit'
+  command: 'curl "http://192.168.1.2/luftfeuchte.php?temp={{ states("sensor.humidity_arbeitszimmer") }}&pressure={{ states("sensor.humidity_arbeitszimmer_2")  }}"'
+  unit_of_measurement: 'g/m³'
+- platform: command_line
+  name: 'Schlafzimmer Absolute Luftfeuchtigkeit'
+  command: 'curl "http://192.168.1.2/luftfeuchte.php?temp={{ states("sensor.humidity_schlafzimmer") }}&pressure={{ states("sensor.humidity_schlafzimmer_2")  }}"'
+  unit_of_measurement: 'g/m³'
+- platform: command_line
+  name: 'Abstellraum Absolute Luftfeuchtigkeit'
+  command: 'curl "http://192.168.1.2/luftfeuchte.php?temp={{ states("sensor.humidity_abstellkammer") }}&pressure={{ states("sensor.humidity_abstellkammer_2")  }}"'
+  unit_of_measurement: 'g/m³'
+- platform: command_line
+  name: 'Draussen Absolute Luftfeuchtigkeit'
+  command: 'curl "http://192.168.1.2/luftfeuchte.php?temp={{ state_attr("weather.openweathermap", "temperature") }}&pressure={{ state_attr("weather.openweathermap", "humidity") }}"'
+  unit_of_measurement: 'g/m³'
+
+- platform: template
+  sensors:
+    someone_home:
+      value_template: '{% if
+                          states("person.christian")|lower() == "home"
+                          or
+                          states("person.elitsa")|lower() == "home"
+                      %}
+                      true
+                      {% else %}
+                      false
+                      {% endif %}'
+      friendly_name: 'Is someone home?'
+
+    christian_work:
+      value_template: '{% if states("device_tracker.skysphone")|lower() == "arbeit" %}true{% else %}false{% endif %}'
+      friendly_name: 'Is Christian at Work?'
+
+    christian_parents:
+      value_template: '{% if states("device_tracker.skysphone")|lower() == "eltern" %}true{% else %}false{% endif %}'
+      friendly_name: 'Is Christian at Parents?'
+
+    elitsa_christian:
+      value_template: '{% if states("device_tracker.38ae2e66_59f7_4dc2_8c80_fda1d1ff2b25_2")|lower() == "home" %}true{% else %}false{% endif %}'
+      friendly_name: 'Is Elitsa at Christian?'
+
+    scene_check_nothing_active:
+      value_template: >-
+        {% if is_state("sensor.scene_check_xbox", "false")
+        and is_state("sensor.scene_check_nintendo_switch", "false") %}
+        true
+        {% else %}
+        false
+        {% endif %}
+      friendly_name: 'Keine Scene Aktiv'
+
+    scene_check_alles_aus:
+      value_template: '{% if is_state("sensor.scene_check_xbox", "off") and is_state("switch.scene_check_nintendo_switch", "off") and is_state("sensor.samsung_tv_living_visible", "OFF") %}true{% else %}false{%- endif %}'
+      friendly_name: 'Scene "Alles aus" aktiv'
+
+    scene_check_xbox:
+      value_template: >-
+        {%- if is_state("binary_sensor.ping_xbox_series_x", "on")
+        and not is_state("media_player.dream_box", "off")
+        and is_state("sensor.samsung_tv_living_visible", "ON") -%}
+        true
+        {%- else -%}
+        false
+        {%- endif -%}
+      friendly_name: 'Scene "Xbox" aktiv'
+
+    scene_check_nintendo_switch:
+      value_template: >-
+        {%- if is_state("binary_sensor.ping_nintendo_switch", "on")
+        and is_state("binary_sensor.ping_xbox_series_x", "off")
+        and is_state("sensor.samsung_tv_living_visible", "ON") -%}
+        true
+        {%- else -%}
+        false
+        {%- endif -%}
+      friendly_name: 'Scene "Nintedo Switch" aktiv'
+
+
+    window_kitchen_status:
+      value_template: '{%- if is_state("input_boolean.window_open_check", "on") and (is_state("binary_sensor.kitchen_window_sensor", "on") or is_state("binary_sensor.kuchen_fenster_links", "on")) and not ( is_state("input_select.klima_standort", "Küche") and ( is_state("sensor.aircondition_status", "air") or is_state("sensor.aircondition_status", "cooling")))  -%}offen{%- else -%}geschlossen{%- endif %}'
+      friendly_name: 'Küchenfenster Status'
+
+    window_balcony_status:
+      value_template: '{%- if is_state("input_boolean.window_open_check", "on") and (is_state("binary_sensor.balkon_fenster_rechts", "on") or is_state("binary_sensor.balkon_fenster_links", "on")) -%}offen{%- else -%}geschlossen{%- endif %}'
+      friendly_name: 'Balkonfenster Status'
+
+    window_living_status:
+      value_template: '{%- if is_state("input_boolean.window_open_check", "on") and (is_state("binary_sensor.living_window_sensor", "on") or is_state("binary_sensor.wohnzimmer_fenster_links", "on")) and not ( is_state("input_select.klima_standort", "Wohnzimmer") and ( is_state("sensor.aircondition_status", "air") or is_state("sensor.aircondition_status", "cooling"))) -%}offen{%- else -%}geschlossen{%- endif %}'
+      friendly_name: 'Wohnzimmerfenster Status'
+
+    window_bathroom_status:
+      value_template: '{%- if is_state("input_boolean.window_open_check", "on") and (is_state("binary_sensor.bathroom_window_manualy", "on")) -%}offen{%- else -%}geschlossen{%- endif %}'
+      friendly_name: 'Badezimmerfenster Status'
+
+    window_workingroom_status:
+      value_template: '{%- if is_state("input_boolean.window_open_check", "on") and (is_state("binary_sensor.arbeitszimmer_fenster_rechts", "on") or is_state("binary_sensor.arbeitszimmer_fenster_links", "on")) and not ( is_state("input_select.klima_standort", "Arbeitszimmer") and ( is_state("sensor.aircondition_status", "air") or is_state("sensor.aircondition_status", "cooling"))) -%}offen{%- else -%}geschlossen{%- endif %}'
+      friendly_name: 'Arbeitszimmerfenster Status'
+
+    window_bedroom_status:
+      value_template: '{%- if is_state("input_boolean.window_open_check", "on") and (is_state("binary_sensor.bedroom_window_sensor_right", "on") or is_state("binary_sensor.schlafzimmer_fenster_links", "on")) and not ( is_state("input_select.klima_standort", "Schlafzimmer") and ( is_state("sensor.aircondition_status", "air") or is_state("sensor.aircondition_status", "cooling"))) -%}offen{%- else -%}geschlossen{%- endif %}'
+      friendly_name: 'Schlafzimmerfenster Status'
+
+
+    window_kitchen_open_check:
+      value_template: '{%- if (is_state("binary_sensor.kitchen_window_sensor_right", "on") or is_state("binary_sensor.kuchen_fenster_links", "on")) and not ( is_state("input_select.klima_standort", "Küche") and ( is_state("sensor.aircondition_status", "air") or is_state("sensor.aircondition_status", "cooling")))  -%}offen{%- else -%}geschlossen{%- endif %}'
+      friendly_name: 'Küchenfenster Offen Check'
+
+    window_balcony_open_check:
+      value_template: '{%- if (is_state("binary_sensor.balkon_fenster_rechts", "on") or is_state("binary_sensor.balkon_fenster_links", "on")) -%}offen{%- else -%}geschlossen{%- endif %}'
+      friendly_name: 'Balkonfenster Offen Check'
+
+    window_living_open_check:
+      value_template: '{%- if (is_state("binary_sensor.living_window_sensor_right", "on") or is_state("binary_sensor.wohnzimmer_fenster_links", "on")) and not ( is_state("input_select.klima_standort", "Wohnzimmer") and ( is_state("sensor.aircondition_status", "air") or is_state("sensor.aircondition_status", "cooling"))) -%}offen{%- else -%}geschlossen{%- endif %}'
+      friendly_name: 'Wohnzimmerfenster Offen Check'
+
+    window_bathroom_open_check:
+      value_template: '{%- if (is_state("binary_sensor.bathroom_window_manualy", "on")) -%}offen{%- else -%}geschlossen{%- endif %}'
+      friendly_name: 'Badezimmerfenster Offen Check'
+
+    window_workingroom_open_check:
+      value_template: '{%- if (is_state("binary_sensor.arbeitszimmer_fenster_rechts", "on") or is_state("binary_sensor.arbeitszimmer_fenster_links", "on")) and not ( is_state("input_select.klima_standort", "Arbeitszimmer") and ( is_state("sensor.aircondition_status", "air") or is_state("sensor.aircondition_status", "cooling"))) -%}offen{%- else -%}geschlossen{%- endif %}'
+      friendly_name: 'Arbeitszimmerfenster Offen Check'
+
+    window_bedroom_open_check:
+      value_template: '{%- if (is_state("binary_sensor.bedroom_window_sensor_right", "on") or is_state("binary_sensor.schlafzimmer_fenster_links", "on")) and not ( is_state("input_select.klima_standort", "Schlafzimmer") and ( is_state("sensor.aircondition_status", "air") or is_state("sensor.aircondition_status", "cooling"))) -%}offen{%- else -%}geschlossen{%- endif %}'
+      friendly_name: 'Schlafzimmerfenster Offen Check'
+
+
+    window_open_check_reset_trigger:
+      value_template: '{%- if is_state("binary_sensor.bathroom_window_manualy", "off") and is_state("binary_sensor.bedroom_window_sensor_right", "off") and is_state("binary_sensor.living_window_sensor_right", "off") and is_state("binary_sensor.kitchen_window_sensor_right", "off") and is_state("binary_sensor.arbeitszimmer_fenster_rechts", "off") and is_state("binary_sensor.arbeitszimmer_fenster_links", "off") and is_state("binary_sensor.schlafzimmer_fenster_links", "off") and is_state("binary_sensor.wohnzimmer_fenster_links", "off") and is_state("binary_sensor.schlafzimmer_fenster_links", "off") and is_state("binary_sensor.kuchen_fenster_links", "off") -%}true{%- else -%}false{%- endif %}'
+      friendly_name: 'Prüfe ob alle Fenster zu und schalter noch an'
+
+    spotify_source_check_macbook:
+      value_template: '{%- if states.media_player.spotify.attributes.source == "Christian’s MacBook Pro" -%}true{%- else -%}false{%- endif %}'
+      friendly_name: 'Prüfe ob Spotify Player Macbook'
+
+    spotify_source_check_iphone:
+      value_template: '{%- if states.media_player.spotify.attributes.source == "SkysPhone" -%}true{%- else -%}false{%- endif %}'
+      friendly_name: 'Prüfe ob Spotify Player SkysPhone'
+
+    spotify_source_check_echo:
+      value_template: '{%- if states.media_player.spotify.attributes.source == "Skydot Living" -%}true{%- else -%}false{%- endif %}'
+      friendly_name: 'Prüfe ob Spotify Player Echo Dot'
+
+    spotify_player_active:
+      value_template: '{{ states.media_player.spotify_christian_schimanski.attributes.source }}'
+      friendly_name: 'Aktueller Spotify Player'
+
+    window_living_balcony_open_check:
+      value_template: '{%- if is_state("window_living_open_check", "offen") or is_state("window_balcony_open_check", "offen") -%}offen{%- else -%}geschlossen{%- endif %}'
+
+    window_open_check:
+      value_template: >-
+        {%- set counter = 0 %}
+        {% if is_state("binary_sensor.wohnzimmer_fenster_links", "on") or is_state("binary_sensor.living_window_sensor_right", "on") %}{% set counter = counter+1 %}{%  endif -%}
+
+        {% if is_state("binary_sensor.bathroom_window_manualy", "on") %}{% set counter = counter+1 %}{%  endif %}
+        
+        {% if is_state("binary_sensor.bedroom_window_sensor_right", "on") or is_state("binary_sensor.schlafzimmer_fenster_links", "on") %}{% set counter = counter+1 %}{%  endif -%}
+
+        {% if is_state("binary_sensor.arbeitszimmer_fenster_rechts", "on") or is_state("binary_sensor.arbeitszimmer_fenster_links", "on") %}{% set counter = counter+1 %}{%  endif -%}
+
+        {% if is_state("binary_sensor.kitchen_window_sensor_right", "on") or is_state("binary_sensor.kuchen_fenster_links", "on") %}{% set counter = counter+1 %}{%  endif %}
+
+        {% if is_state("binary_sensor.balkon_fenster_links", "on") or is_state("binary_sensor.balkon_fenster_rechts", "on") %}{% set counter = counter+1 %}{%  endif -%}
+        {{counter}}
+      friendly_name: 'Fenster offen'
+    #yahoo weahter has been removed from home assistant and i did not want to updated every place where sensor was used so i faked the sensor with new data
+    yweather_temperature:
+      value_template: '{{states.weather.openweathermap.attributes.temperature}}'
+      friendly_name: 'yweather ersatz sensor'
+
+    living_light_color:
+      value_template: '{{states.light.stehlampe.attributes.rgb_color}}'
+      friendly_name: 'Wohnzimmer Stehlicht Farbe'
+
+    living_light_color_red:
+      value_template: '{{states.light.stehlampe.attributes.rgb_color[0]}}'
+      friendly_name: 'Wohnzimmer Stehlicht Farbe Rot'
+
+    living_light_color_green:
+      value_template: '{{states.light.stehlampe.attributes.rgb_color[1]}}'
+      friendly_name: 'Wohnzimmer Stehlicht Farbe Grün'
+
+    living_light_color_blue:
+      value_template: '{{states.light.stehlampe.attributes.rgb_color[2]}}'
+      friendly_name: 'Wohnzimmer Stehlicht Farbe Blau'
+
+    living_light_brightness:
+      value_template: '{{states.light.stehlampe.attributes.brightness|default(0)}}'
+      friendly_name: 'Wohnzimmer Stehlicht Helligkeit'
+
+    washing_machine_status:
+      value_template: >-
+        {% if states("switch.washing_switch")|lower() == "off" %}
+        Aus
+        {% elif states("input_boolean.washing_machine_switch")|lower() == "on" and states("input_boolean.washing_machine_running")|lower() == "off" %}
+        Fertig
+        {% elif states("switch.washing_switch")|lower() == "on" and states("input_boolean.washing_machine_switch")|lower() == "off" and states("input_boolean.washing_machine_running")|lower() == "on" %}
+        Läuft
+        {% else %}
+        Leerlauf
+        {% endif %}
+      friendly_name: Waschmaschine Status
+
+    last_alexa:
+      friendly_name: 'Last Alexa'
+      value_template: >-
+        {% if is_state_attr('media_player.kuche','last_called', true) %}
+          kuche_dot
+        {% elif is_state_attr('media_player.schlafzimmer','last_called', true) %}
+          schlafzimmer_dot
+        {% elif is_state_attr('media_player.wohnzimmer','last_called', true) %}
+          wohnzimmer_dot
+        {% elif is_state_attr('media_player.arbeitszimmer','last_called', true) %}
+          arbeitszimmer_dot
+        {% else %}
+          none
+        {% endif %}
+
+    spotify_speaker:
+      value_template: "{{ state_attr('media_player.spotify_christian_schimanski', 'source') }}"
+      friendly_name: 'Spotify Lautsprecher'
+
+    living_hifi_volume:
+      value_template: "{{ (state_attr('media_player.hifi_receiver', 'volume_level') * 100) | int  }}"
+      friendly_name: 'Wohnzimmer Receiver Lautstärke'
+
+    spotify_active_playlist:
+      value_template: >-
+        {%- set playlist = state_attr('media_player.spotify_christian_schimanski', 'media_playlist')  -%}
+        {% if playlist == "Holiday Party Mix"  %}
+        Party
+        {% elif playlist == "From Starred"  %}
+        Favorites
+        {% elif playlist == "Timeless Love Songs"  %}
+        Romantic
+        {% elif playlist == "Discover Weekly"  %}
+        {{ playlist }}
+        {% elif playlist == "On Repeat"  %}
+        {{ playlist }}
+        {% else %}
+        Keine Playlist gewählt
+        {% endif %}
+      friendly_name: 'Spotify Playlist playing'
+
+    rooms_with_sleepmode_active:
+      value_template: >-
+        {%- set counter = 0 %}
+        {% if is_state("input_boolean.sleepmode_bathroom", "on") %}{% set counter = counter+1 %}{%  endif %}
+        {% if is_state("input_boolean.sleepmode_floor", "on") %}{% set counter = counter+1 %}{%  endif %}
+        {% if is_state("input_boolean.sleepmode_living", "on") %}{% set counter = counter+1 %}{%  endif -%}
+        {% if is_state("input_boolean.sleepmode_kitchen", "on") %}{% set counter = counter+1 %}{%  endif -%}
+        {% if is_state("input_boolean.sleepmode_workingroom", "on") %}{% set counter = counter+1 %}{%  endif -%}
+        {% if is_state("input_boolean.sleepmode_bedroom", "on") %}{% set counter = counter+1 %}{%  endif -%}
+        {% if is_state("input_boolean.sleepmode_guestroom", "on") %}{% set counter = counter+1 %}{%  endif -%}
+        {{counter}}
+      friendly_name: 'Anzahl Räume im Schlafmodus'
+
+    braava_status:
+      value_template: '{{ states("vacuum.braava_jet") }}'
+      friendly_name: 'Braava Status'
+
+    aircondition_status:
+      value_template: >-
+        {% set climatePower = states("sensor.aircondition_wattage") | float(2) %}
+        {%- if is_state("switch.aircondition_relay", "off") or is_state("switch.aircondition_relay", "unavailable") -%}
+        off
+        {%- elif climatePower < 1 -%}
+        standby
+        {%- elif climatePower > 10 and climatePower < 60 -%}
+        air
+        {%- else -%}
+        cooling
+        {%- endif -%}
+      friendly_name: 'Klimaanlage'
+
+
+    time_until_washing_done:
+      value_template: >-
+        {% set time = states("input_number.minuten_bis_waschmaschine_fertig")|int*60 %}
+        {% set minutes = ((time % 3600) / 60) | int %}
+        {% set hours = ((time % 86400) / 3600) | int %}
+        {% if hours == 0 %}
+        {{ minutes }} Minuten
+        {% else %}
+        {{ hours ~ ' Stunden ' ~ minutes }} Minuten
+        {% endif %}
+      friendly_name: 'Dauer bis Waschmaschine ca. fertig'
+
+    sun_azimuth:
+      value_template: '{{ state_attr("sun.sun", "azimuth") | int }}'
+      friendly_name: 'Sonnen position am Horizont'
+
+    washing_time_rest:
+      value_template: "{{ states('input_number.minuten_bis_waschmaschine_fertig')|int }}"
+      attribute_templates:
+        orig_value: '{{ states("input_number.washing_start_minutes") }}'
+
+    complication_washing_timer:
+      value_template: "{{ (100/ states(\"input_number.washing_start_minutes\") | int * states(\"input_number.minuten_bis_waschmaschine_fertig\") | int) | round | int / 100 }}"
+
+    dishwasher_status:
+      value_template: >-
+        {% if states("sensor.kitchen_disher_power") | float == 0.0 %}
+        Aus
+        {% elif states("sensor.kitchen_disher_power") | float > 0.0 and states("sensor.kitchen_disher_power") | float < 1.0 and states("input_boolean.dishwasher_active") == "off" and is_state("input_boolean.dishwasher_done", "off") %}
+        Leerlauf
+        {% elif states("input_boolean.dishwasher_active") == "on" %}
+        Läuft
+        {% elif is_state("input_boolean.dishwasher_done", "on") %}
+        Fertig
+        {% endif %}
+
+    disher_time_rest:
+      value_template: "{{ states('input_number.dishwasher_resttime')|int }}"
+      attribute_templates:
+        orig_value: '{{ states("input_number.dishwasher_start_minutes") }}'
+
+    airquality_living:
+      friendly_name: Luftqualität Wohnzimmer
+      value_template: >-
+        {% set airquality = states("sensor.wohnzimmer_absolute_luftfeuchtigkeit") | float %}
+        {% if airquality > 12.4 %}kritisch{% elif airquality > 10.4 %}zu hoch{% elif airquality > 6.9 and airquality < 10.4 %}ideal{% else %}sehr niedrig{% endif %}
+    airquality_bathroom:
+      friendly_name: Luftqualität Badezimmer
+      value_template: >-
+        {% set airquality = states("sensor.badezimmer_absolute_luftfeuchtigkeit") | float %}
+        {% if airquality > 12.4 %}kritisch{% elif airquality > 10.4 %}zu hoch{% elif airquality > 6.9 and airquality < 10.4 %}ideal{% else %}sehr niedrig{% endif %}
+    airquality_workingroom:
+      friendly_name: Luftqualität Arbeitszimmer
+      value_template: >-
+        {% set airquality = states("sensor.arbeitszimmer_absolute_luftfeuchtigkeit") | float %}
+        {% if airquality > 12.4 %}kritisch{% elif airquality > 10.4 %}zu hoch{% elif airquality > 6.9 and airquality < 10.4 %}ideal{% else %}sehr niedrig{% endif %}
+    airquality_bedroom:
+      friendly_name: Luftqualität Schlafzimmer
+      value_template: >-
+        {% set airquality = states("sensor.schlafzimmer_absolute_luftfeuchtigkeit") | float %}
+        {% if airquality > 12.4 %}kritisch{% elif airquality > 10.4 %}zu hoch{% elif airquality > 6.9 and airquality < 10.4 %}ideal{% else %}sehr niedrig{% endif %}
+    airquality_storageroom:
+      friendly_name: Luftqualität Abstellraum
+      value_template: >-
+        {% set airquality = states("sensor.abstellraum_absolute_luftfeuchtigkeit") | float %}
+        {% if airquality > 12.4 %}kritisch{% elif airquality > 10.4 %}zu hoch{% elif airquality > 6.9 and airquality < 10.4 %}ideal{% else %}sehr niedrig{% endif %}
+
+    ventilation_rooms:
+      friendly_name: Räume mit zu hoher Luftfeuchtigkeit
+      value_template: >-
+        {% set ventilation_rooms = 0 %}
+        {% if is_state("sensor.airquality_living", "zu hoch") %}{% set ventilation_rooms = ventilation_rooms +1 %}{% endif  %}
+        {% if is_state("sensor.airquality_bathroom", "zu hoch") %}{% set ventilation_rooms = ventilation_rooms +1 %}{% endif  %}
+        {% if is_state("sensor.airquality_bedroom", "zu hoch") %}{% set ventilation_rooms = ventilation_rooms +1 %}{% endif  %}
+        {% if is_state("sensor.airquality_storageroom", "zu hoch") %}{% set ventilation_rooms = ventilation_rooms +1 %}{% endif  %}
+        {% if is_state("sensor.airquality_workingroom", "zu hoch") %}{% set ventilation_rooms = ventilation_rooms +1 %}{% endif  %}
+        {{ ventilation_rooms }}
+
+    show_plex_activity:
+      value_template: >-
+        {% if  states("sensor.plex_skysserver") == 'unknown' or states("sensor.plex_skysserver") == 'unavailable' %}0{% else %}{{ states("sensor.plex_skysserver") }}{% endif %}
+      unit_of_measurement: Watching
+
+    count_humidity_dry:
+      value_template: >-
+        {{ states.sensor | selectattr('state', 'in', ['sehr niedrig']) | map(attribute='entity_id') | list | length }}
+      friendly_name: Anzahl zu gringe Luftfeuchtigkeit
+
+    count_humidity_ideal:
+      value_template: >-
+        {{ states.sensor | selectattr('state', 'in', ['ideal']) | map(attribute='entity_id') | list | length }}
+      friendly_name: Anzahl ideale Luftfeuchtigkeit
+
+    count_humidity_height:
+      value_template: >-
+        {{ states.sensor | selectattr('state', 'in', ['zu hoch']) | map(attribute='entity_id') | list | length }}
+      friendly_name: Anzahl zu hohe Luftfeuchtigkeit
+
+    count_humidity_critical:
+      value_template: >-
+        {{ states.sensor | selectattr('state', 'in', ['kritisch']) | map(attribute='entity_id') | list | length }}
+      friendly_name: Anzahl Kritische Luftfeuchtigkeit
+
+    count_force_light_on:
+      value_template: >-
+        {{ states.input_boolean | selectattr('entity_id', 'in', state_attr('group.force_occupied', 'entity_id'))| selectattr('state','eq','on') | map(attribute='entity_id')| list | length }}
+      friendly_name: Licht an erzwingen Anzahl
+      unit_of_measurement: Räume
+
+    count_force_light_off:
+      value_template: >-
+        {{ states.input_boolean | selectattr('entity_id', 'in', state_attr('group.force_light_off', 'entity_id'))| selectattr('state','eq','on') | map(attribute='entity_id')| list | length }}
+      friendly_name: Licht aus erzwingen Anzahl
+      unit_of_measurement: Räume
+
+    wall_tablet_workingroom_battery_level:
+      value_template: >-
+        {{ state_attr("sensor.tablet_arbeitszimmer", "battery_level") }}
+      unit_of_measurement: '%'
+      friendly_name: Batterie Stand Tablet Arbeitszimmer

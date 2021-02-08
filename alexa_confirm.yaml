@@ -1,0 +1,23 @@
+    >
+    {{ [
+    "OK",
+    "Sicher",
+    "Wenn du darauf bestehst",
+    "Erledigt",
+    "Kein Problem",
+    "Kann ich machen",
+    "Überlass das mir",
+    "Betrachte es als erledigt",
+    "Wie du wünscht",
+    "Wie du Befiehlst",
+    "Bestätigt",
+    "Ja oh großer Meister",
+    "Mache ich",
+    "Wie du befiehlst, so soll es geschehen",
+    "Null Problemo",
+    "Wird erledigt",
+    "Nichts leichter als das",
+    "Wenn das dann alles ist",
+    "Wenn das alles ist",
+    "Kleinigkeit für mich"
+    ] | random }} 

@@ -1,0 +1,9 @@
+- platform: philips_js
+  host: 192.168.1.21
+
+#- platform: lg_netcast
+#  host: 192.168.0.20
+
+#- platform: apple_tv
+#  host: 192.168.1.105
+#  login_id: !secret appletv_id

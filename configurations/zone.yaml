@@ -1,0 +1,16 @@
+- name: arbeit
+  latitude: 51.2181207
+  longitude: 6.7484031
+  radius: 5000
+
+- name: eltern
+  latitude: 51.7030352
+  longitude: 7.1247657
+  radius: 100
+
+# This will override the default home zone
+- name: home
+  latitude: 50.824253
+  longitude: 6.475237
+  radius: 50
+  icon: mdi:account-multiple

@@ -1,0 +1,2 @@
+purge_keep_days: 20
+#db_url: 'mysql://hass:ih01qb4xp@192.168.1.2/homeassistant'

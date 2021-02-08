@@ -1,0 +1,3670 @@
+wo_ist_christians_handy:
+  alias: wo ist christians handy
+  mode: single
+  sequence:
+  - data:
+      account: c.schimanski@gmx.net
+      device_name: SkysPhone
+    service: icloud.play_sound
+set_device_work:
+  alias: set location Work
+  sequence:
+  - service: device_tracker.see
+    data:
+      gps:
+      - 51.21802
+      - 6.748613
+      gps_accuracy: 0
+      dev_id: skysphone
+      location_name: arbeit
+set_device_home:
+  alias: set location Home
+  sequence:
+  - service: device_tracker.see
+    data:
+      gps:
+      - 50.824303
+      - 6.475214
+      gps_accuracy: 0
+      dev_id: skysphone
+      location_name: home
+set_device_not_home:
+  alias: set location Not Home
+  sequence:
+  - service: device_tracker.see
+    data:
+      dev_id: skysphone
+      location_name: not_home
+set_device_elitsa_home:
+  alias: set elitsa location Home
+  sequence:
+  - service: device_tracker.see
+    data:
+      gps:
+      - 50.824303
+      - 6.475214
+      dev_id: iphone
+      location_name: home
+set_device_elitsa_not_home:
+  alias: set location Elitsa Not Home
+  sequence:
+  - service: device_tracker.see
+    data:
+      dev_id: iphone
+      location_name: not_home
+messages_to_elitsa:
+  sequence:
+  - condition: state
+    entity_id: person.elitsa
+    state: home
+  - data_template:
+      message: '{{ message }}'
+    service: notify.devices_elitsa
+  mode: single
+messages_to_christian:
+  sequence:
+  - service: notify.devices_christian
+    data_template:
+      message: '{{ message }}'
+backup_server_movie_shutdown:
+  alias: shutdown backup server
+  sequence:
+  - delay:
+      hours: 5
+  - condition: state
+    entity_id: switch.backup_server_filme
+    state: 'on'
+  - service: switch.turn_off
+    entity_id: switch.backup_server_filme
+open_windows_message_christian:
+  sequence:
+  - condition: state
+    entity_id: person.christian
+    state: home
+  - service: notify.mobile_app_skysphone
+    data_template:
+      title: '{{ title }}'
+      message: '{{ message }}'
+      data:
+        push:
+          sound:
+            name: default
+            critical: 1
+            volume: 1.0
+open_windows_message_elitsa:
+  sequence:
+  - condition: state
+    entity_id: person.elitsa
+    state: home
+  - service: notify.mobile_app_iphone
+    data_template:
+      title: '{{ title }}'
+      message: '{{ message }}'
+      data:
+        push:
+          sound:
+            name: default
+            critical: 1
+            volume: 1.0
+someone_in_floor_off:
+  alias: someone in floor - off
+  mode: restart
+  sequence:
+  - delay:
+      minutes: 1
+  - data: {}
+    entity_id: input_boolean.someone_in_floor
+    service: input_boolean.turn_off
+  - condition: state
+    entity_id: input_boolean.yoga
+    state: 'off'
+  - service: input_boolean.turn_off
+    data: {}
+    entity_id: input_boolean.someone_in_large_floor
+someone_in_large_floor_off:
+  alias: someone in large floor - off
+  mode: restart
+  sequence:
+  - delay:
+      seconds: 30
+  - data: {}
+    entity_id: input_boolean.someone_in_large_floor
+    service: input_boolean.turn_off
+someone_in_bedroom_off:
+  alias: someone in bedroom - off
+  mode: restart
+  sequence:
+  - delay:
+      minutes: 5
+  - data: {}
+    entity_id: input_boolean.someone_in_bedroom
+    service: input_boolean.turn_off
+someone_in_bathroom_off:
+  alias: someone in bathroom - off
+  mode: restart
+  sequence:
+  - delay:
+      hours: 0
+      minutes: 15
+      seconds: 0
+      milliseconds: 0
+  - data: {}
+    entity_id: input_boolean.someone_in_bathroom
+    service: input_boolean.turn_off
+someone_in_living_off:
+  alias: someone in living - off
+  mode: restart
+  sequence:
+  - delay:
+      minutes: 5
+  - data: {}
+    entity_id: input_boolean.someone_in_living
+    service: input_boolean.turn_off
+someone_in_kitchen_off:
+  alias: someone in kitchen - off
+  mode: restart
+  sequence:
+  - delay:
+      minutes: 2
+  - data: {}
+    entity_id: input_boolean.someone_in_kitchen
+    service: input_boolean.turn_off
+someone_in_guestroom_off:
+  alias: someone in guestroom - off
+  mode: restart
+  sequence:
+  - delay:
+      minutes: 10
+  - data: {}
+    entity_id: input_boolean.someone_in_guestroom
+    service: input_boolean.turn_off
+someone_in_storageroom_off:
+  alias: someone in storageroom - off
+  mode: restart
+  sequence:
+  - delay:
+      seconds: 30
+  - data: {}
+    entity_id: input_boolean.someone_in_storageroom
+    service: input_boolean.turn_off
+shutdown_server:
+  alias: Schalte Server aus wenn 20 Minuten nichts mehr bei Plex läuft
+  sequence:
+  - condition: state
+    entity_id: input_boolean.server_shutdown_overwrite
+    state: 'off'
+  - delay:
+      minutes: '{{states.input_number.server_shutdown_timer.state | int}}'
+  - service: shell_command.skynas_off
+  - service: script.turn_off
+    entity_id: script.shutdown_server_if_nothing_active
+shutdown_server_abort:
+  alias: Breche Server Shutdown ab
+  sequence:
+  - service: script.turn_off
+    entity_id: script.shutdown_server
+  - service: script.turn_off
+    entity_id: script.shutdown_server_if_nothing_active
+shutdown_server_if_nothing_active:
+  alias: Schalte Server sofort aus wenn nichts läuft
+  sequence:
+  - delay:
+      minutes: '{{states.input_number.server_shutdown_timer.state | int}}'
+  - condition: state
+    entity_id: sensor.show_plex_activity
+    state: '0'
+  - condition: state
+    entity_id: input_boolean.server_shutdown_overwrite
+    state: 'off'
+  - service: shell_command.skynas_off
+alexa_good_night:
+  sequence:
+  - service: script.turn_on
+    entity_id: script.activate_sleepmode_bathroom
+  - service: script.turn_on
+    entity_id: script.activate_sleepmode_bedroom
+  - service: script.turn_on
+    entity_id: script.activate_sleepmode_floor
+  - service: script.turn_on
+    entity_id: script.activate_sleepmode_living
+  - service: script.turn_on
+    entity_id: script.activate_sleepmode_kitchen
+  - service: script.turn_on
+    entity_id: script.activate_sleepmode_workingroom
+  - service: script.turn_on
+    entity_id: script.activate_sleepmode_guestroom
+activate_sleepmode_guestroom:
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_guestroom
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.someone_in_guestroom
+    state: 'off'
+  - entity_id: input_boolean.sleepmode_guestroom
+    service: input_boolean.turn_on
+  - data: {}
+    entity_id: group.guestroom_light
+    service: homeassistant.turn_off
+  mode: single
+activate_sleepmode_bathroom:
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_bathroom
+    state: 'off'
+  - data: {}
+    entity_id: input_boolean.force_occupied_bathroom
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.force_light_off_bathroom
+    service: input_boolean.turn_off
+  - condition: state
+    entity_id: input_boolean.someone_in_bathroom
+    state: 'off'
+  - entity_id: input_boolean.sleepmode_bathroom
+    service: input_boolean.turn_on
+  - data: {}
+    entity_id: script.badezimmer_rollo_runter
+    service: script.turn_on
+  - data: {}
+    entity_id: group.bathroom_light
+    service: homeassistant.turn_off
+  - data: {}
+    entity_id: input_boolean.rollo_automatik_badezimmer
+    service: input_boolean.turn_off
+  mode: single
+  alias: activate_sleepmode_bathroom
+activate_sleepmode_bedroom:
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_bedroom
+    state: 'off'
+  - entity_id: input_boolean.sleepmode_bedroom
+    service: input_boolean.turn_on
+  - entity_id: switch.bedroom_main_light_switch
+    service: switch.turn_off
+  - data: {}
+    entity_id: script.schlafzimmer_rollo_runter
+    service: script.turn_on
+  - data: {}
+    entity_id: group.bedroom_light
+    service: homeassistant.turn_off
+  - data: {}
+    entity_id: input_boolean.force_occupied_bedroom
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.force_light_off_bedroom
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.rollo_automatik_schlafzimmer
+    service: input_boolean.turn_off
+  mode: single
+activate_sleepmode_floor:
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_floor
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.someone_in_floor
+    state: 'off'
+  - entity_id: input_boolean.sleepmode_floor
+    service: input_boolean.turn_on
+  - data: {}
+    entity_id: group.floor_light
+    service: homeassistant.turn_off
+  mode: single
+activate_sleepmode_kitchen:
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_kitchen
+    state: 'off'
+  - data: {}
+    entity_id: input_boolean.force_light_off_kitchen
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.force_occupied_kitchen
+    service: input_boolean.turn_off
+  - condition: state
+    entity_id: input_boolean.someone_in_kitchen
+    state: 'off'
+  - entity_id: input_boolean.sleepmode_kitchen
+    service: input_boolean.turn_on
+  - data: {}
+    entity_id: script.kueche_rollo_runter
+    service: script.turn_on
+  - data: {}
+    entity_id: group.kitchen_light
+    service: homeassistant.turn_off
+  - data: {}
+    entity_id: input_boolean.rollo_automatik_kueche
+    service: input_boolean.turn_off
+  - service: light.turn_off
+    data: {}
+    entity_id: light.kuchen_lightstrip
+  mode: single
+activate_sleepmode_living:
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_living
+    state: 'off'
+  - data: {}
+    entity_id: input_boolean.force_occupied_living
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.force_light_off_living
+    service: input_boolean.turn_off
+  - condition: state
+    entity_id: group.living_all
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.someone_in_living
+    state: 'off'
+  - entity_id: input_boolean.sleepmode_living
+    service: input_boolean.turn_on
+  - data: {}
+    entity_id: script.wohnzimmer_rollo_runter
+    service: script.turn_on
+  - data: {}
+    entity_id: script.balkon_rollo_runter
+    service: script.turn_on
+  - data: {}
+    entity_id: group.living_light
+    service: homeassistant.turn_off
+  - data: {}
+    entity_id: input_boolean.rollo_automatik_wohnzimmer
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.rollo_automatik_balkon
+    service: input_boolean.turn_off
+  - service: light.turn_off
+    data: {}
+    entity_id: light.wohnzimmer_couchlicht
+  mode: single
+activate_sleepmode_workingroom:
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_workingroom
+    state: 'off'
+  - data: {}
+    entity_id: input_boolean.force_occupied_workingroom
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.force_light_off_workingroom
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: script.arbeitszimmer_rollo_runter
+    service: script.turn_on
+  - condition: state
+    entity_id: group.workingroom_all
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.someone_in_workingroom
+    state: 'off'
+  - entity_id: input_boolean.sleepmode_workingroom
+    service: input_boolean.turn_on
+  - data: {}
+    entity_id: group.workingroom_light
+    service: homeassistant.turn_off
+  - data: {}
+    entity_id: input_boolean.rollo_automatik_arbeitszimmer
+    service: input_boolean.turn_off
+  mode: single
+shut_off_bedroom_after_cleaning:
+  sequence:
+  - condition: template
+    value_template: '{{ states(''sensor.last_alexa'') != ''schlafzimmer_dot'' }}'
+  - service: homeassistant.turn_off
+    entity_id: group.bedroom_light
+shut_off_kitchen_after_cleaning:
+  sequence:
+  - condition: template
+    value_template: '{{ states(''sensor.last_alexa'') != ''kuche_dot'' }}'
+  - service: homeassistant.turn_off
+    entity_id: group.kitchen_light
+shut_off_living_after_cleaning:
+  sequence:
+  - condition: template
+    value_template: '{{ states(''sensor.last_alexa'') != ''wohnzimmer_dot'' }}'
+  - service: homeassistant.turn_off
+    entity_id: group.living_light
+shut_off_workingroom_after_cleaning:
+  sequence:
+  - condition: template
+    value_template: '{{ states(''sensor.last_alexa'') != ''arbeitszimmer_dot'' }}'
+  - service: homeassistant.turn_off
+    entity_id: group.workingroom_light
+schalte_schlafzimmer_tv_aus:
+  alias: schalte Schlafzimmer TV aus
+  mode: single
+  sequence:
+  - delay:
+      minutes: 15
+  - data: {}
+    entity_id: switch.bedroom_tv_switch_switch
+    service: switch.turn_off
+someone_in_workingroom_off:
+  alias: someone in workingroom - off
+  mode: single
+  sequence:
+  - delay:
+      minutes: 5
+  - data: {}
+    entity_id: input_boolean.someone_in_workingroom
+    service: input_boolean.turn_off
+sleeptimer_tv:
+  alias: sleeptimer tv
+  mode: single
+  sequence:
+  - delay:
+      minutes: '{{ states("input_number.sleeptimer_schlafzimmer_tv") | int }}'
+  - data: {}
+    entity_id: switch.bedroom_tv_switch_switch
+    service: switch.turn_off
+  - data:
+      value: 0
+    entity_id: input_number.sleeptimer_schlafzimmer_tv
+    service: input_number.set_value
+abstellraum_licht_timer:
+  alias: Abstellraum Licht Timer
+  mode: single
+  sequence:
+  - delay:
+      minutes: 15
+  - data: {}
+    entity_id: light.abstellraum
+    service: light.turn_off
+wohnzimmer_rollo_50:
+  alias: Wohnzimmer Rollo 50%
+  mode: single
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_living
+    state: 'off'
+  - data:
+      position: 60
+    entity_id: cover.living_roller_shutter_level
+    service: cover.set_cover_position
+wohnzimmer_rollo_runter:
+  alias: Wohnzimmer Rollo Runter
+  mode: single
+  sequence:
+  - data: {}
+    entity_id: cover.living_roller_shutter_level
+    service: cover.close_cover
+  - condition: state
+    entity_id: binary_sensor.balkon_fenster_links
+    state: 'off'
+wohnzimmer_rollo_hoch:
+  alias: Wohnzimmer Rollo Hoch
+  mode: single
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_living
+    state: 'off'
+  - data: {}
+    entity_id: cover.living_roller_shutter_level
+    service: cover.open_cover
+balkon_rollo_50:
+  alias: Balkon Rollo 50%
+  mode: single
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_living
+    state: 'off'
+  - data:
+      position: 70
+    entity_id: cover.balcony_roller_shutter_level
+    service: cover.set_cover_position
+balkon_rollo_runter:
+  alias: Balkon Rollo Runter
+  mode: single
+  sequence:
+  - data: {}
+    entity_id: cover.balcony_roller_shutter_level
+    service: cover.close_cover
+balkon_rollo_hoch:
+  alias: Balkon Rollo Hoch
+  mode: single
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_living
+    state: 'off'
+  - data: {}
+    entity_id: cover.balcony_roller_shutter_level
+    service: cover.open_cover
+badezimmer_rollo_50:
+  alias: Badezimmer Rollo 50%
+  mode: single
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_bathroom
+    state: 'off'
+  - data:
+      position: 70
+    entity_id: cover.bathroom_roller_shutter_level
+    service: cover.set_cover_position
+badezimmer_rollo_runter:
+  alias: Badezimmer Rollo Runter
+  mode: single
+  sequence:
+  - data:
+      position: 15
+    entity_id: cover.bathroom_roller_shutter_level
+    service: cover.set_cover_position
+badezimmer_rollo_hoch:
+  alias: Badezimmer Rollo Hoch
+  mode: single
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_bathroom
+    state: 'off'
+  - data: {}
+    entity_id: cover.bathroom_roller_shutter_level
+    service: cover.open_cover
+arbeitszimmer_rollo_50:
+  alias: Arbeitszimmer Rollo 50%
+  mode: single
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_workingroom
+    state: 'off'
+  - data:
+      position: 70
+    entity_id: cover.workingroom_roller_shutter_level
+    service: cover.set_cover_position
+arbeitszimmer_rollo_runter:
+  alias: Arbeitszimmer Rollo Runter
+  mode: single
+  sequence:
+  - data:
+      position: 15
+    entity_id: cover.workingroom_roller_shutter_level
+    service: cover.set_cover_position
+arbeitszimmer_rollo_hoch:
+  alias: Arbeitszimmer Rollo Hoch
+  mode: single
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_workingroom
+    state: 'off'
+  - data: {}
+    entity_id: cover.workingroom_roller_shutter_level
+    service: cover.open_cover
+kueche_rollo_50:
+  alias: Küchen Rollo 50%
+  mode: single
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_kitchen
+    state: 'off'
+  - data:
+      position: 60
+    entity_id: cover.kitchen_roller_shutter_level
+    service: cover.set_cover_position
+kueche_rollo_runter:
+  alias: Küchen Rollo Runter
+  mode: single
+  sequence:
+  - data: {}
+    entity_id: cover.kitchen_roller_shutter_level
+    service: cover.close_cover
+kueche_rollo_hoch:
+  alias: Küchen Rollo Hoch
+  mode: single
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_kitchen
+    state: 'off'
+  - data: {}
+    entity_id: cover.kitchen_roller_shutter_level
+    service: cover.open_cover
+schlafzimmer_rollo_50:
+  alias: Schlafzimmer Rollo 50%
+  mode: single
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_bedroom
+    state: 'off'
+  - data:
+      position: 60
+    entity_id: cover.bedroom_roller_shutter_level
+    service: cover.set_cover_position
+schlafzimmer_rollo_runter:
+  alias: Schlafzimmer Rollo Runter
+  mode: single
+  sequence:
+  - data:
+      position: 15
+    entity_id: cover.bedroom_roller_shutter_level
+    service: cover.set_cover_position
+schlafzimmer_rollo_hoch:
+  alias: Schlafzimmer Rollo Hoch
+  mode: single
+  sequence:
+  - condition: state
+    entity_id: input_boolean.sleepmode_bedroom
+    state: 'off'
+  - data: {}
+    entity_id: cover.bedroom_roller_shutter_level
+    service: cover.open_cover
+alexa_rollo_50_percent:
+  sequence:
+  - data_template:
+      entity_id: '{%- set room = states("sensor.last_alexa") -%} {%- if room == "kuche_dot"
+        -%} script.kueche_rollo_50 {%- elif room == "schlafzimmer_dot" -%} script.schlafzimmer_rollo_50
+        {%- elif room == "wohnzimmer_dot" -%} script.wohnzimmer_rollo_50 {%- elif
+        room == "arbeitszimmer_dot" -%} script.arbeitszimmer_rollo_50 {%- endif -%}'
+    service: script.turn_on
+  mode: single
+alexa_rollo_hoch:
+  sequence:
+  - data_template:
+      entity_id: '{%- set room = states("sensor.last_alexa") -%} {%- if room == "kuche_dot"
+        -%} script.kueche_rollo_hoch {%- elif room == "schlafzimmer_dot" -%} script.schlafzimmer_rollo_hoch
+        {%- elif room == "wohnzimmer_dot" -%} script.wohnzimmer_rollo_hoch {%- elif
+        room == "arbeitszimmer_dot" -%} script.arbeitszimmer_rollo_hoch {%- endif
+        -%}'
+    service: script.turn_on
+  mode: single
+alexa_rollo_runter:
+  sequence:
+  - data_template:
+      entity_id: '{%- set room = states("sensor.last_alexa") -%} {%- if room == "kuche_dot"-%}
+        script.kueche_rollo_runter {%- elif room == "schlafzimmer_dot" -%} script.schlafzimmer_rollo_runter
+        {%- elif room == "wohnzimmer_dot" -%} script.wohnzimmer_rollo_runter {%- elif
+        room == "arbeitszimmer_dot" -%} script.arbeitszimmer_rollo_runter {%- endif
+        -%}'
+    service: homeassistant.turn_on
+  mode: single
+  alias: alexa_rollo_runter
+alexa_glotze_aus:
+  sequence:
+  - data_template:
+      entity_id: '{%- set room = states("sensor.last_alexa") -%} {%- if room == "schlafzimmer_dot"-%}
+        switch.bedroom_tv_switch_switch {%- elif room == "kuche_dot" -%} switch.wohnzimmer_entertainment
+        {%- elif room == "wohnzimmer_dot" -%} switch.wohnzimmer_entertainment {%-
+        elif room == "arbeitszimmer_dot" -%} switch.arbeitszimmer_tv_relay {%- endif
+        -%}'
+    service: switch.turn_off
+  mode: single
+alexa_glotze_an:
+  sequence:
+  - data_template:
+      entity_id: '{%- set room = states("sensor.last_alexa") -%} {%- if room == "schlafzimmer_dot"-%}
+        switch.bedroom_tv_switch_switch {%- elif room == "kuche_dot" -%} switch.wohnzimmer_entertainment
+        {%- elif room == "wohnzimmer_dot" -%} switch.wohnzimmer_entertainment {%-
+        elif room == "arbeitszimmer_dot" -%} switch.arbeitszimmer_tv_relay {%- endif
+        -%}'
+    service: switch.turn_on
+  mode: single
+alexa_licht_an:
+  sequence:
+  - service: homeassistant.turn_on
+    data_template:
+      entity_id: '{%- set room = states("sensor.last_alexa") -%} {%- if room == "schlafzimmer_dot"-%}
+        group.bedroom_light {%- elif room == "wohnzimmer_dot" -%} group.living_light
+        {%- elif room == "kuche_dot" -%} group.kitchen_light {%- elif room == "arbeitszimmer_dot"
+        -%} group.workingroom_light {%- endif -%}'
+alexa_licht_aus:
+  sequence:
+  - service: homeassistant.turn_off
+    data_template:
+      entity_id: '{%- set room = states("sensor.last_alexa") -%} {%- if room == "schlafzimmer_dot"-%}
+        group.bedroom_light {%- elif room == "wohnzimmer_dot" -%} group.living_light
+        {%- elif room == "kuche_dot" -%} group.kitchen_light {%- elif room == "arbeitszimmer_dot"
+        -%} group.workingroom_light {%- endif -%}'
+alle_rollos_hoch:
+  alias: alle rollos hoch
+  mode: single
+  sequence:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.sleepmode_living
+        state: 'off'
+      sequence:
+      - data: {}
+        entity_id: script.wohnzimmer_rollo_hoch
+        service: script.turn_on
+      - data: {}
+        entity_id: script.balkon_rollo_hoch
+        service: script.turn_on
+    default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.sleepmode_kitchen
+        state: 'off'
+      sequence:
+      - data: {}
+        entity_id: script.kueche_rollo_hoch
+        service: script.turn_on
+    default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.sleepmode_workingroom
+        state: 'off'
+      sequence:
+      - data: {}
+        entity_id: script.arbeitszimmer_rollo_hoch
+        service: script.turn_on
+    default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.sleepmode_bedroom
+        state: 'off'
+      sequence:
+      - data: {}
+        entity_id: script.schlafzimmer_rollo_hoch
+        service: script.turn_on
+    default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.sleepmode_bathroom
+        state: 'off'
+      sequence:
+      - data: {}
+        entity_id: script.badezimmer_rollo_hoch
+        service: script.turn_on
+    default: []
+  - data:
+      option: Offen
+    entity_id: input_select.rollo_stand
+    service: input_select.select_option
+alle_rollos_runter:
+  alias: alle rollos runter
+  mode: single
+  sequence:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.sleepmode_living
+        state: 'off'
+      sequence:
+      - data: {}
+        entity_id: script.wohnzimmer_rollo_runter
+        service: script.turn_on
+      - data: {}
+        entity_id: script.balkon_rollo_runter
+        service: script.turn_on
+    default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.sleepmode_kitchen
+        state: 'off'
+      sequence:
+      - data: {}
+        entity_id: script.kueche_rollo_runter
+        service: script.turn_on
+    default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.sleepmode_workingroom
+        state: 'off'
+      sequence:
+      - data: {}
+        entity_id: script.arbeitszimmer_rollo_runter
+        service: script.turn_on
+    default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.sleepmode_bedroom
+        state: 'off'
+      sequence:
+      - data: {}
+        entity_id: script.schlafzimmer_rollo_runter
+        service: script.turn_on
+    default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.sleepmode_bathroom
+        state: 'off'
+      sequence:
+      - data: {}
+        entity_id: script.badezimmer_rollo_runter
+        service: script.turn_on
+    default: []
+  - data:
+      option: Geschlossen
+    entity_id: input_select.rollo_stand
+    service: input_select.select_option
+alle_rollos_50:
+  alias: alle rollos 50 prozent
+  mode: single
+  sequence:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.sleepmode_living
+        state: 'off'
+      sequence:
+      - data: {}
+        entity_id: script.wohnzimmer_rollo_50
+        service: script.turn_on
+      - data: {}
+        entity_id: script.balkon_rollo_50
+        service: script.turn_on
+    default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.sleepmode_kitchen
+        state: 'off'
+      sequence:
+      - data: {}
+        entity_id: script.kueche_rollo_50
+        service: script.turn_on
+    default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.sleepmode_workingroom
+        state: 'off'
+      sequence:
+      - data: {}
+        entity_id: script.arbeitszimmer_rollo_50
+        service: script.turn_on
+    default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.sleepmode_bedroom
+        state: 'off'
+      sequence:
+      - data: {}
+        entity_id: script.schlafzimmer_rollo_50
+        service: script.turn_on
+    default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.sleepmode_bathroom
+        state: 'off'
+      sequence:
+      - data: {}
+        entity_id: script.badezimmer_rollo_50
+        service: script.turn_on
+    default: []
+  - data:
+      option: Sonnenschutz
+    entity_id: input_select.rollo_stand
+    service: input_select.select_option
+bettlicht_ausschalten:
+  alias: Bettlicht ausschalten
+  mode: single
+  sequence:
+  - condition: state
+    entity_id: input_boolean.eli_aufgestanden
+    state: 'off'
+  - delay:
+      seconds: 30
+  - data: {}
+    entity_id: switch.bedroom_bed_light_switch
+    service: switch.turn_off
+alexa_rollo_automatik_aus:
+  sequence:
+  - service: homeassistant.turn_off
+    data_template:
+      entity_id: '{%- set room = states("sensor.last_alexa") -%} {%- if room == "schlafzimmer_dot"-%}
+        input_boolean.rollo_automatik_schlafzimmer {%- elif room == "wohnzimmer_dot"
+        -%} input_boolean.rollo_automatik_wohnzimmer {%- elif room == "kuche_dot"
+        -%} input_boolean.rollo_automatik_kueche {%- elif room == "arbeitszimmer_dot"-%}
+        input_boolean.rollo_automatik_arbeitszimmer {%- endif -%}'
+alexa_rollo_automatik_an:
+  sequence:
+  - service: homeassistant.turn_off
+    data_template:
+      entity_id: '{%- set room = states("sensor.last_alexa") -%} {%- if room == "schlafzimmer_dot"-%}
+        input_boolean.rollo_automatik_schlafzimmer {%- elif room == "wohnzimmer_dot"
+        -%} input_boolean.rollo_automatik_wohnzimmer {%- elif room == "kuche_dot"
+        -%} input_boolean.rollo_automatik_kueche {%- elif room == "arbeitszimmer_dot"-%}
+        input_boolean.rollo_automatik_arbeitszimmer {%- endif -%}'
+wo_ist_elis_handy:
+  alias: wo ist Elis handy
+  mode: single
+  sequence:
+  - data:
+      account: elitsadoncheva@gmail.com
+      device_name: iPhone
+    service: icloud.play_sound
+alexa_good_morning:
+  sequence:
+  - data_template:
+      entity_id: '{%- set room = states("sensor.last_alexa") -%}  {%- if room == "kuche_dot"-%}
+        group.sleepmode_all_but_bedroom {%- elif room == "schlafzimmer_dot" -%} group.sleepmode
+        {%- elif room == "wohnzimmer_dot" -%} group.sleepmode_all_but_bedroom {%-
+        elif room == "arbeitszimmer_dot" -%} group.sleepmode_all_but_bedroom {%- endif
+        -%}'
+    service: homeassistant.turn_off
+  mode: single
+spotify_scene_party:
+  alias: Spotify - Party
+  sequence:
+  - service: media_player.play_media
+    data:
+      entity_id: media_player.spotify_christian_schimanski
+      media_content_type: playlist
+      media_content_id: spotify:user:1121745177:playlist:1HHn5bWh1mj5CKKX4bL0WR
+spotify_scene_on_repeat:
+  alias: Spotify - On Repeat
+  sequence:
+  - service: media_player.play_media
+    data:
+      entity_id: media_player.spotify_christian_schimanski
+      media_content_type: playlist
+      media_content_id: spotify:user:1121745177:playlist:37i9dQZF1EpzhEAI32cw5z
+  - service: media_player.shuffle_set
+    data:
+      entity_id: media_player.spotify_christian_schimanski
+      shuffle: true
+spotify_scene_romantic:
+  alias: Spotify - Romantic
+  sequence:
+  - service: media_player.play_media
+    data:
+      entity_id: media_player.spotify_christian_schimanski
+      media_content_type: playlist
+      media_content_id: spotify:user:warnerbros.records:playlist:28Are6AwbN43VQkGwGpXL9
+spotify_scene_favorites:
+  alias: Spotify - Favorites
+  sequence:
+  - service: media_player.play_media
+    data:
+      entity_id: media_player.spotify_christian_schimanski
+      media_content_type: playlist
+      media_content_id: spotify:user:1121745177:playlist:4EJkI9g2YJNprf6OxnIre2
+spotify_scene_discover_weekly:
+  alias: Spotify - Discover Weekly
+  sequence:
+  - service: media_player.play_media
+    data:
+      entity_id: media_player.spotify_christian_schimanski
+      media_content_type: playlist
+      media_content_id: spotify:user:spotify:playlist:37i9dQZEVXcHIb0YlgkPmT
+spotify_activate_shuffle:
+  alias: Spotify - Shuffle On
+  sequence:
+  - service: media_player.shuffle_set
+    data:
+      entity_id: media_player.spotify_christian_schimanski
+      shuffle: true
+spotify_deactivate_shuffle:
+  alias: Spotify - Shuffle Off
+  sequence:
+  - service: media_player.shuffle_set
+    data:
+      entity_id: media_player.spotify_christian_schimanski
+      shuffle: false
+start_server_track_user:
+  alias: start server track user
+  mode: single
+  sequence:
+  - data: {}
+    entity_id: switch.skynas
+    service: switch.turn_on
+  - data:
+      message: '{% set changed_by_id = states.script.start_server_track_user.context.user_id  %}
+        {% set changed_by = (states.person | selectattr(''attributes.user_id'',''=='',
+        changed_by_id))| list | first or "system" %} Server gestartet von {{ "System"
+        if changed_by == "system" else state_attr(changed_by.entity_id, "friendly_name")
+        }} '
+    service: notify.devices_christian
+  - data: {}
+    entity_id: input_boolean.skynas_starting
+    service: input_boolean.turn_on
+power_charger_not_used_check:
+  sequence:
+  - delay:
+      seconds: 30
+  - condition: numeric_state
+    entity_id: sensor.power_charger_wattage
+    below: 1
+  - service: switch.turn_off
+    entity_id: switch.power_charger_relay
+alexa_do_not_shut_off_the_light:
+  sequence:
+  - data_template:
+      entity_id: '{%- set room = states("sensor.last_alexa") -%} {%- if room == "kuche_dot"-%}
+        input_boolean.force_occupied_kitchen {%- elif room == "schlafzimmer_dot" -%}
+        input_boolean.force_occupied_bedroom {%- elif room == "wohnzimmer_dot" -%}
+        input_boolean.force_occupied_living {%- elif room == "arbeitszimmer_dot" -%}
+        input_boolean.force_occupied_workingroom {%- endif -%}'
+    service: input_boolean.turn_on
+  mode: single
+alexa_do_not_shut_on_the_light:
+  sequence:
+  - data_template:
+      entity_id: '{%- set room = states("sensor.last_alexa") -%} {%- if room == "kuche_dot"-%}
+        input_boolean.force_light_off_kitchen {%- elif room == "schlafzimmer_dot"
+        -%} input_boolean.force_light_off_bedroom {%- elif room == "wohnzimmer_dot"
+        -%} input_boolean.force_light_off_living {%- elif room == "arbeitszimmer_dot"
+        -%} input_boolean.force_light_off_workingroom {%- endif -%}'
+    service: input_boolean.turn_on
+  mode: single
+waschmaschine_dauer_countdown:
+  alias: Waschmaschine Dauer countdown
+  mode: single
+  sequence:
+  - data: {}
+    entity_id: input_number.minuten_bis_waschmaschine_fertig
+    service: input_number.decrement
+bathroom_still_occupied_check:
+  alias: bathroom still occupied check
+  mode: single
+  sequence:
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.badezimmer_dusche_motion
+      state: 'off'
+    - condition: state
+      entity_id: binary_sensor.bathroom_multi_sensor_sensor
+      state: 'off'
+    - condition: state
+      entity_id: binary_sensor.badezimmer_motion
+      state: 'off'
+  - data: {}
+    entity_id: input_boolean.someone_in_bathroom
+    service: input_boolean.turn_off
+parkplatz_senden:
+  alias: Parkplatz senden
+  mode: single
+  sequence:
+  - data_template:
+      data:
+        url: http://maps.apple.com?t=m&z=14&dirflg=w&address={{ state_attr("person.auto",
+          "latitude") }},{{ state_attr("person.auto", "longitude") }}
+      message: Parkplatz anzeigen
+    service: notify.mobile_app_skysphone
+morning_cast_eli:
+  alias: morning cast Eli
+  sequence:
+  - delay:
+      seconds: 15
+  - service: cast.show_lovelace_view
+    data:
+      dashboard_path: lovelace
+      view_path: start
+      entity_id: media_player.wohnzimmer_2
+  - delay:
+      seconds: 10
+  - service: cast.show_lovelace_view
+    data:
+      dashboard_path: lovelace-chromecast
+      view_path: overview
+      entity_id: media_player.wohnzimmer_2
+  - delay:
+      seconds: 10
+  - service: cast.show_lovelace_view
+    data:
+      dashboard_path: lovelace-chromecast
+      view_path: overview
+      entity_id: media_player.wohnzimmer_2
+  mode: single
+morning_eli_play_news:
+  alias: morning Eli play news
+  sequence:
+  - data:
+      entity_id: media_player.wohnzimmer_2
+      media_content_type: cast
+      media_content_id: ' { "app_name": "youtube", "media_id": "{{ states("input_text.latest_news_video")
+        }}" }'
+    service: media_player.play_media
+    entity_id: media_player.wohnzimmer_2
+  mode: single
+test_message_fierte_living:
+  alias: Test Message FireTv Living
+  sequence:
+  - service: notify.wohnzimmer_firetv_4k
+    data:
+      message: Messagetext
+      title: My Notification 2
+      data:
+        fontsize: large
+        position: center
+        file:
+          url: https://images.pexels.com/photos/1146134/pexels-photo-1146134.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500
+  mode: single
+alexa_waschmaschine_status:
+  alias: Alexa Waschmaschine Status
+  sequence:
+  - service: notify.send_to_input_text
+    data:
+      message: '{% if is_state("sensor.washing_machine_status", "Aus") %} Die Waschmaschine
+        ist aus {% elif is_state("sensor.washing_machine_status", "Fertig")%} Die
+        Waschmadschine ist fertig {% else %} Die Waschmaschine ist in etwa {{ states("sensor.washing_time_rest")
+        }} Minuten fertig {% endif %}'
+  mode: single
+alexa_say_server_status:
+  alias: alexa_say_server_status
+  sequence:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.silent_messages_only
+        state: 'on'
+      sequence:
+      - service: notify.send_to_input_text
+        data:
+          message: Der Server ist {%- if is_state("switch.skynas", "on") -%} {{ "
+            an" }} {%- if is_state("input_boolean.server_shutdown_overwrite", "on")
+            -%} {{ " und automatisch runterfahren ist ausgeschaltet" }} {% endif -%}
+            {% else -%} {{ " aus" }} {% endif %}
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.silent_messages_only
+        state: 'off'
+      sequence:
+      - service: '{%- set room = states("sensor.last_alexa") -%} {%- if room =="schlafzimmer_dot"-%}
+          notify.alexa_media_schlafzimmer {%- elif room == "wohnzimmer_dot"-%} notify.alexa_media_wohnzimmer
+          {%- elif room == "kuche_dot" -%} notify.alexa_media_kuche {%- elif room
+          == "arbeitszimmer_dot" -%} notify.alexa_media_arbeitszimmer {%- endif-%}'
+        data:
+          message: Der Server ist {%- if is_state("switch.skynas", "on") -%} {{ "
+            an" }} {%- if is_state("input_boolean.server_shutdown_overwrite", "on")
+            -%} {{ " und automatisch runterfahren ist ausgeschaltet" }} {% endif -%}
+            {% else -%} {{ " aus" }} {% endif %}
+          data:
+            type: announce
+    default: []
+  mode: single
+spulmaschine_dauer_countdown:
+  alias: Spülmaschine Dauer Countdown
+  sequence:
+  - data: {}
+    entity_id: input_number.dishwasher_resttime
+    service: input_number.decrement
+  mode: single
+wohnzimmer_tv_wird_nicht_gebraucht_also_aus:
+  alias: Wohnzimmer TV wird nicht gebraucht also aus
+  sequence:
+  - delay:
+      minutes: 90
+  - service: notify.wohnzimmer_firetv_4k
+    data:
+      message: Bist du noch da und wach? Sonst geht der TV gleich aus. Wink mal :-)
+      title: Noch da?
+      data:
+        fontsize: large
+        position: center
+  - service: input_boolean.turn_on
+    data: {}
+    entity_id: input_boolean.wohnzimmer_tv_aus_timer
+  - delay:
+      minutes: 5
+  - service: switch.turn_off
+    data: {}
+    entity_id: switch.wohnzimmer_entertainment
+  - service: input_boolean.turn_off
+    data: {}
+    entity_id: input_boolean.someone_in_living
+  - service: input_boolean.turn_off
+    data: {}
+    entity_id: input_boolean.force_occupied_living
+  - service: input_boolean.turn_off
+    data: {}
+    entity_id: input_boolean.force_light_off_living
+  mode: single
+set_random_color:
+  alias: set random color
+  sequence:
+  - service: input_number.set_value
+    data:
+      value: '{{ range(0, 256) | random }}'
+    entity_id: input_number.color_red
+  - service: input_number.set_value
+    data:
+      value: '{{ range(0, 256) | random }}'
+    entity_id: input_number.color_green
+  - service: input_number.set_value
+    data:
+      value: '{{ range(0, 256) | random }}'
+    entity_id: input_number.color_blue
+  mode: single
+alexa_nickerchen:
+  alias: Alexa nickerchen
+  sequence:
+  - data_template:
+      entity_id: '{%- set room = states("sensor.last_alexa") -%}  {%- if room == "kuche_dot"-%}
+        input_boolean.nickerchen_wohnzimmer  {%- elif room == "schlafzimmer_dot" -%}
+        input_boolean.nickerchen_aktiv  {%- elif room == "wohnzimmer_dot" -%} input_boolean.nickerchen_wohnzimmer  {%-
+        endif -%}'
+    service: input_boolean.turn_on
+  mode: single
+alexa_say_washing_status:
+  alias: alexa_say_dishwasher_status
+  sequence:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.silent_messages_only
+        state: 'on'
+      sequence:
+      - service: notify.send_to_input_text
+        data:
+          message: '{% if is_state("sensor.dishwasher_status", "Aus") %} Die Spülmaschine
+            ist aus {% elif is_state("sensor.dishwasher_status", "Fertig")%} Die Spülmaschine
+            ist fertig {% else %} Die Spülmaschine ist in etwa {{ states("sensor.disher_time_rest")
+            }} Minuten fertig {% endif %}'
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.silent_messages_only
+        state: 'off'
+      sequence:
+      - service: '{%- set room = states("sensor.last_alexa") -%} {%- if room =="schlafzimmer_dot"-%}
+          notify.alexa_media_schlafzimmer {%- elif room == "wohnzimmer_dot"-%} notify.alexa_media_wohnzimmer
+          {%- elif room == "kuche_dot" -%} notify.alexa_media_kuche {%- elif room
+          == "arbeitszimmer_dot" -%} notify.alexa_media_arbeitszimmer {%- endif-%}'
+        data:
+          message: '{% if is_state("sensor.dishwasher_status", "Aus") %} Die Spülmaschine
+            ist aus {% elif is_state("sensor.dishwasher_status", "Fertig")%} Die Spülmaschine
+            ist fertig {% else %} Die Spülmaschine ist in etwa {{ states("sensor.disher_time_rest")
+            }} Minuten fertig {% endif %}'
+          data:
+            type: announce
+    default: []
+  mode: single
+popup_bathroom_light:
+  alias: Popup Bathroom Light
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Badezimmer Licht
+      card:
+        type: grid
+        columns: 1
+        square: false
+        cards:
+        - type: grid
+          columns: 2
+          cards:
+          - type: custom:button-card
+            entity: switch.bathroom_main_light_switch
+            icon: mdi:wall-sconce-round
+            show_name: false
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+          - type: custom:button-card
+            entity: switch.bathroom_shower_light_switch
+            icon: mdi:shower-head
+            show_name: false
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+        - content: '## Licht Automatik
+
+
+            Das Licht bleibt nach aktivieren an/aus bis man selber das Licht wieder
+            an/ausschaltet. Wird zum Schlafen wieder zurück gesetzt.'
+          type: markdown
+        - type: grid
+          columns: 2
+          cards:
+          - type: custom:button-card
+            entity: input_boolean.force_light_off_bathroom
+            icon: mdi:lightbulb-off
+            show_name: true
+            name: Licht auslassen
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+          - type: custom:button-card
+            entity: input_boolean.force_occupied_bathroom
+            icon: mdi:lightbulb-on
+            show_name: true
+            name: Licht anlassen
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+        - type: custom:mini-graph-card
+          align_icon: left
+          align_state: left
+          hours_to_show: 72
+          tap_action:
+            action: none
+          entities:
+          - entity: sensor.bathroom_multi_sensor_luminance
+          icon: mdi:weather-sunny
+          name: Helligkeit
+          height: 80
+          show:
+            fill: true
+        - entity: light.golight
+          type: light
+          icon: hue:Go
+  mode: single
+popup_kitchen_light:
+  alias: Popup Kitchen Light
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Küchen Licht
+      card:
+        type: grid
+        columns: 1
+        square: false
+        cards:
+        - type: grid
+          columns: 2
+          cards:
+          - type: custom:button-card
+            entity: switch.kitchen_main_light_switch
+            icon: mdi:wall-sconce-round
+            show_name: false
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+          - type: custom:button-card
+            entity: switch.kuche_schranklicht_schalter
+            icon: mdi:wall-sconce-flat
+            show_name: false
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+        - content: '## Licht Automatik
+
+
+            Das Licht bleibt nach aktivieren an/aus bis man selber das Licht wieder
+            an/ausschaltet. Wird zum Schlafen wieder zurück gesetzt.'
+          type: markdown
+        - type: grid
+          columns: 2
+          cards:
+          - type: custom:button-card
+            entity: input_boolean.force_light_off_kitchen
+            icon: mdi:lightbulb-off
+            show_name: true
+            name: Licht auslassen
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+          - type: custom:button-card
+            entity: input_boolean.force_occupied_kitchen
+            icon: mdi:lightbulb-on
+            show_name: true
+            name: Licht anlassen
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+        - type: custom:mini-graph-card
+          align_icon: left
+          align_state: left
+          hours_to_show: 72
+          tap_action:
+            action: none
+          entities:
+          - entity: sensor.kitchen_multi_sensor_luminance
+          icon: mdi:weather-sunny
+          name: Helligkeit
+          height: 80
+          show:
+            fill: true
+  mode: single
+popup_kitchen_lightstrip:
+  alias: popup Kitchen Lightstrip
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Küche Lichtstreifen
+      card:
+        type: vertical-stack
+        cards:
+        - type: button
+          tap_action:
+            action: toggle
+          entity: light.kuchen_lightstrip
+        - type: horizontal-stack
+          cards:
+          - type: button
+            tap_action:
+              action: toggle
+            entity: input_boolean.halloween_farben
+          - type: button
+            tap_action:
+              action: toggle
+            entity: input_boolean.weihnachtsfarben
+        - type: button
+          tap_action:
+            action: toggle
+          entity: input_boolean.lightstrip_random_color
+  mode: single
+popup_kitchen_disher:
+  alias: popup kitchen disher
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Spülmaschine
+      card:
+        cards:
+        - type: picture-elements
+          image: /local/washer-dryer/background1x1.png
+          elements:
+          - type: image
+            image: /local/washer-dryer/dishwasher-500.png
+            style:
+              left: 50%
+              top: 50%
+              width: 80%
+          - type: custom:circle-sensor-card
+            fill: rgba(255, 255, 255, 0)
+            attribute_max: orig_value
+            entity: sensor.disher_time_rest
+            font_style:
+              font-size: 0
+              text-align: center
+            show_card: false
+            stroke_width: 15
+            style:
+              height: 40%
+              width: 40%
+              left: 50%
+              top: 55%
+          - type: state-label
+            entity: sensor.disher_time_rest
+            style:
+              color: '#99d6ff'
+              right: 16%
+              top: 12%
+              font-size: 300%
+              transform: initial
+          - type: state-label
+            entity: sensor.dishwasher_status
+            style:
+              left: 50%
+              top: 85%
+              font-size: 160%
+        - type: conditional
+          conditions:
+          - entity: sensor.dishwasher_status
+            state: Leerlauf
+          card:
+            type: entities
+            entities:
+            - entity: input_select.dishwasher_programs
+            show_header_toggle: false
+        type: vertical-stack
+  mode: single
+popup_living_light:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Wohnzimmer Licht
+      card:
+        type: grid
+        columns: 1
+        square: false
+        cards:
+        - type: grid
+          columns: 2
+          cards:
+          - type: custom:button-card
+            entity: switch.living_main_light_switch
+            icon: mdi:wall-sconce-round
+            show_name: false
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+          - type: custom:button-card
+            entity: switch.wohnzimmer_stehlicht_schalter
+            icon: mdi:floor-lamp
+            show_name: false
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+        - content: '## Licht Automatik
+
+
+            Das Licht bleibt nach aktivieren an/aus bis man selber das Licht wieder
+            an/ausschaltet. Wird zum Schlafen wieder zurück gesetzt.'
+          type: markdown
+        - type: grid
+          columns: 2
+          cards:
+          - type: custom:button-card
+            entity: input_boolean.force_light_off_living
+            icon: mdi:lightbulb-off
+            show_name: true
+            name: Licht auslassen
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+          - type: custom:button-card
+            entity: input_boolean.force_occupied_living
+            icon: mdi:lightbulb-on
+            show_name: true
+            name: Licht anlassen
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+        - type: custom:mini-graph-card
+          align_icon: left
+          align_state: left
+          hours_to_show: 72
+          tap_action:
+            action: none
+          entities:
+          - entity: sensor.living_multi_sensor_luminance
+          icon: mdi:weather-sunny
+          name: Helligkeit
+          height: 80
+          show:
+            fill: true
+  mode: single
+  alias: popup living light
+popup_living_lightstrip:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Couch Lichtstreifen
+      card:
+        type: vertical-stack
+        cards:
+        - type: button
+          tap_action:
+            action: toggle
+          entity: light.wohnzimmer_couchlicht
+        - type: horizontal-stack
+          cards:
+          - type: button
+            tap_action:
+              action: toggle
+            entity: input_boolean.halloween_farben
+          - type: button
+            tap_action:
+              action: toggle
+            entity: input_boolean.weihnachtsfarben
+        - type: button
+          tap_action:
+            action: toggle
+          entity: input_boolean.lightstrip_random_color
+  mode: single
+  alias: popup living lightstrip
+popup_living_aquarium:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Aquarium
+      card:
+        type: vertical-stack
+        cards:
+        - type: picture
+          image: /local/aquarium.jpg
+          tap_action:
+            action: none
+          hold_action:
+            action: none
+        - card:
+            content: Das Licht geht aus um 22:{{states("input_number.random_minute")|int}}
+              Uhr
+            type: markdown
+          conditions:
+          - entity: switch.living_aquarium_light
+            state: 'on'
+          type: conditional
+        - type: entities
+          entities:
+          - entity: input_datetime.aquarium_licht_an_ab
+          state_color: false
+  mode: single
+  alias: popup living aquarium
+popup_living_entertainment:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Entertaiment
+      card:
+        type: grid
+        square: false
+        columns: 2
+        cards:
+        - type: grid
+          columns: 1
+          cards:
+          - type: custom:button-card
+            entity: switch.living_beamer_switch
+            icon: mdi:projector
+            show_name: false
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+        - type: custom:button-card
+          entity: switch.wohnzimmer_tv_relay
+          icon: mdi:television
+          show_name: false
+          size: 60%
+          styles:
+            card:
+            - height: 100%
+          state:
+          - value: 'off'
+            icon: mdi:television-off
+  mode: single
+  alias: popup living entertainment
+popup_bedroom_light:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Schlafzimmer Licht
+      card:
+        type: grid
+        columns: 1
+        square: false
+        cards:
+        - type: custom:button-card
+          entity: switch.bedroom_main_light_switch
+          icon: mdi:wall-sconce-round
+          show_name: false
+          size: 60%
+        - content: '## Licht Automatik
+
+
+            Das Licht bleibt nach aktivieren an/aus bis man selber das Licht wieder
+            an/ausschaltet. Wird zum Schlafen wieder zurück gesetzt.'
+          type: markdown
+        - type: grid
+          columns: 2
+          cards:
+          - type: custom:button-card
+            entity: input_boolean.force_light_off_bedroom
+            icon: mdi:lightbulb-off
+            show_name: true
+            name: Licht auslassen
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+          - type: custom:button-card
+            entity: input_boolean.force_occupied_bedroom
+            icon: mdi:lightbulb-on
+            show_name: true
+            name: Licht anlassen
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+        - type: custom:mini-graph-card
+          align_icon: left
+          align_state: left
+          hours_to_show: 72
+          tap_action:
+            action: none
+          entities:
+          - entity: sensor.bedroom_multi_sensor_luminance
+          icon: mdi:weather-sunny
+          name: Helligkeit
+          height: 80
+          show:
+            fill: true
+  mode: single
+  alias: popup bedroom light
+popup_bedroom_entertainment:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Schlafzimmer TV
+      card:
+        entities:
+        - entity: input_number.sleeptimer_schlafzimmer_tv
+          name: Dauer bis Aus
+        title: Sleeptimer
+        type: entities
+  mode: single
+  alias: popup bedroom entertainment
+popup_living_window:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Fenster Wohnbereich
+      card:
+        type: grid
+        columns: 2
+        cards:
+        - type: custom:button-card
+          entity: sensor.window_living_open_check
+          icon: mdi:window-closed-variant
+          show_state: false
+          show_name: true
+          name: Wohnzimmer
+          size: 60%
+          styles:
+            icon:
+            - color: var(--paper-item-icon-color)
+            card:
+            - height: 100%
+          state:
+          - value: offen
+            icon: mdi:window-open-variant
+            styles:
+              icon:
+              - color: red
+        - type: custom:button-card
+          entity: sensor.window_balcony_open_check
+          icon: mdi:window-closed-variant
+          show_state: false
+          show_name: true
+          name: Balkon
+          size: 60%
+          styles:
+            icon:
+            - color: var(--paper-item-icon-color)
+            card:
+            - height: 100%
+          state:
+          - value: offen
+            icon: mdi:window-open-variant
+            styles:
+              icon:
+              - color: red
+  mode: single
+  alias: popup living window
+popup_workingroom_light:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Arbeitszimmer Licht
+      card:
+        type: grid
+        columns: 1
+        square: false
+        cards:
+        - type: grid
+          columns: 2
+          cards:
+          - type: custom:button-card
+            entity: switch.workingroom_light_switch
+            icon: mdi:wall-sconce-round
+            show_name: false
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+          - entity: light.stehlicht
+            type: light
+            name: ' '
+        - content: '## Licht Automatik
+
+
+            Das Licht bleibt nach aktivieren an/aus bis man selber das Licht wieder
+            an/ausschaltet. Wird zum Schlafen wieder zurück gesetzt.'
+          type: markdown
+        - type: grid
+          columns: 2
+          cards:
+          - type: custom:button-card
+            entity: input_boolean.force_light_off_workingroom
+            icon: mdi:lightbulb-off
+            show_name: true
+            name: Licht auslassen
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+          - type: custom:button-card
+            entity: input_boolean.force_occupied_workingroom
+            icon: mdi:lightbulb-on
+            show_name: true
+            name: Licht anlassen
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+        - type: custom:mini-graph-card
+          align_icon: left
+          align_state: left
+          hours_to_show: 72
+          tap_action:
+            action: none
+          entities:
+          - entity: sensor.workingroom_multi_sensor_luminance
+          icon: mdi:weather-sunny
+          name: Helligkeit
+          height: 80
+          show:
+            fill: true
+  mode: single
+  alias: popup workingroom light
+popup_workingroom_workingdesk:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Schreibtisch
+      card:
+        type: grid
+        columns: 2
+        cards:
+        - type: grid
+          columns: 1
+          square: false
+          cards:
+          - type: custom:button-card
+            entity: switch.laptop_relay
+            icon: mdi:laptop
+            show_name: false
+            size: 60%
+          - align_icon: left
+            align_state: left
+            entities:
+            - entity: sensor.laptop_wattage
+              show_legend: false
+              name: Verbrauch
+            icon: mdi:power-plug
+            name: Verbrauch
+            show:
+              fill: true
+            type: custom:mini-graph-card
+        - type: grid
+          columns: 1
+          square: false
+          cards:
+          - type: custom:button-card
+            entity: switch.monitor_relay
+            icon: mdi:monitor
+            show_name: false
+            size: 60%
+          - align_icon: left
+            align_state: left
+            entities:
+            - entity: sensor.monitor_wattage
+              show_legend: false
+              name: Verbrauch
+            icon: mdi:power-plug
+            name: Verbrauch
+            show:
+              fill: true
+            type: custom:mini-graph-card
+  mode: single
+  alias: popup workingroom workingdesk
+popup_storageroom_washing:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Waschmaschine
+      card:
+        cards:
+        - type: picture-elements
+          image: /local/washer-dryer/background1x1.png
+          elements:
+          - type: image
+            image: /local/washer-dryer/washer-500.png
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              service_data:
+                entity_id: switch.washing_switch
+            hold_action:
+              action: more-info
+              service_data:
+                entity_id: switch.washing_switch
+            style:
+              left: 50%
+              top: 50%
+              width: 80%
+          - type: custom:circle-sensor-card
+            fill: rgba(66, 66, 66)
+            attribute_max: orig_value
+            entity: sensor.washing_time_rest
+            font_style:
+              font-size: 0
+              text-align: center
+            show_card: false
+            stroke_width: 15
+            style:
+              height: 40%
+              width: 40%
+              left: 50%
+              top: 55%
+          - type: state-label
+            entity: sensor.washing_time_rest
+            style:
+              color: '#99d6ff'
+              right: 16%
+              top: 12%
+              font-size: 300%
+              transform: initial
+          - type: state-label
+            entity: sensor.washing_machine_status
+            style:
+              left: 50%
+              top: 85%
+              font-size: 160%
+          - type: image
+            image: /local/washer-dryer/background1x1.png
+            style:
+              left: 50%
+              top: 50%
+              width: 80%
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              service_data:
+                entity_id: switch.washing_switch
+        - type: conditional
+          conditions:
+          - entity: switch.washing_switch
+            state: 'on'
+          card:
+            type: entities
+            entities:
+            - entity: input_select.waschprogramme
+        type: vertical-stack
+  mode: single
+  alias: popup storageroom washing
+popup_storageroom_server:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Server
+      card:
+        cards:
+        - entity: switch.skynas
+          name: Server/NAS
+          show_state: false
+          state_image:
+            'off': /local/server-bw.png
+            'on': /local/server-color.png
+          tap_action:
+            action: toggle
+          type: picture-entity
+        - card:
+            entities:
+            - entity: input_number.server_shutdown_timer
+              icon: mdi:timer
+            - entity: input_boolean.server_shutdown_overwrite
+              icon: mdi:sleep-off
+            show_header_toggle: false
+            type: entities
+          conditions:
+          - entity: switch.skynas
+            state: 'on'
+          type: conditional
+        type: vertical-stack
+  mode: single
+  alias: popup storageroom server
+popup_floor_roller_shutter:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Alles Rollos
+      card:
+        type: grid
+        columns: 1
+        square: false
+        cards:
+        - cards:
+          - cards:
+            - aspect_ratio: 0%
+              entity: script.alle_rollos_hoch
+              image: /local/roller_shutter/roller_shutter_open.png
+              name: Hoch
+              show_state: false
+              tap_action:
+                action: toggle
+              type: picture-entity
+            - aspect_ratio: 0%
+              entity: script.alle_rollos_50
+              image: /local/roller_shutter/roller_shutter_sunshade.png
+              name: Sonnenschutz
+              show_state: false
+              tap_action:
+                action: toggle
+              type: picture-entity
+            - aspect_ratio: 0%
+              entity: script.alle_rollos_runter
+              image: /local/roller_shutter/roller_shutter_closed.png
+              name: Runter
+              show_state: false
+              tap_action:
+                action: toggle
+              type: picture-entity
+            type: horizontal-stack
+          - entities:
+            - entity: group.rollo_automatik
+            show_header_toggle: false
+            type: entities
+          type: vertical-stack
+        - type: grid
+          cards:
+          - type: custom:button-card
+            entity: cover.kitchen_roller_shutter_level
+            icon: mdi:window-shutter
+            show_name: true
+            name: Küche
+            size: 60%
+            tap_action:
+              action: call-service
+              service: script.popup_roller_shutter
+              service_data:
+                room_name:
+                - Kueche
+                entity_name:
+                - kitchen
+                deviceID:
+                - this
+            styles:
+              icon:
+              - color: var(--paper-item-icon-color)
+              card:
+              - height: 100%
+          - type: custom:button-card
+            entity: cover.balcony_roller_shutter_level
+            icon: mdi:window-shutter
+            show_name: true
+            name: Balkon
+            size: 60%
+            tap_action:
+              action: call-service
+              service: script.popup_roller_shutter
+              service_data:
+                room_name:
+                - Balkon
+                entity_name:
+                - balcony
+                deviceID:
+                - this
+            styles:
+              icon:
+              - color: var(--paper-item-icon-color)
+              card:
+              - height: 100%
+          - type: custom:button-card
+            entity: cover.living_roller_shutter_level
+            icon: mdi:window-shutter
+            show_name: true
+            name: Wohnzimmer
+            size: 60%
+            tap_action:
+              action: call-service
+              service: script.popup_roller_shutter
+              service_data:
+                room_name:
+                - Wohnzimmer
+                entity_name:
+                - living
+                deviceID:
+                - this
+            styles:
+              icon:
+              - color: var(--paper-item-icon-color)
+              card:
+              - height: 100%
+          - type: custom:button-card
+            entity: cover.bathroom_roller_shutter_level
+            icon: mdi:window-shutter
+            show_name: true
+            name: Badezimmer
+            size: 60%
+            tap_action:
+              action: call-service
+              service: script.popup_roller_shutter
+              service_data:
+                room_name:
+                - Badezimmer
+                entity_name:
+                - bathroom
+                deviceID:
+                - this
+            styles:
+              icon:
+              - color: var(--paper-item-icon-color)
+              card:
+              - height: 100%
+          - type: custom:button-card
+            entity: cover.workingroom_roller_shutter_level
+            icon: mdi:window-shutter
+            show_name: true
+            name: Arbeitszimmer
+            size: 60%
+            tap_action:
+              action: call-service
+              service: script.popup_roller_shutter
+              service_data:
+                room_name:
+                - Arbeitszimmer
+                entity_name:
+                - workingroom
+                deviceID:
+                - this
+            styles:
+              icon:
+              - color: var(--paper-item-icon-color)
+              card:
+              - height: 100%
+          - type: custom:button-card
+            entity: cover.bedroom_roller_shutter_level
+            icon: mdi:window-shutter
+            show_name: true
+            name: Schlafzimmer
+            size: 60%
+            tap_action:
+              action: call-service
+              service: script.popup_roller_shutter
+              service_data:
+                room_name:
+                - Schlafzimmer
+                entity_name:
+                - bedroom
+                deviceID:
+                - this
+            styles:
+              icon:
+              - color: var(--paper-item-icon-color)
+              card:
+              - height: 100%
+  mode: single
+  alias: popup floor roller shutter
+popup_livingarea_roller_shutter:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Wohnbereich Rollos
+      card:
+        type: grid
+        columns: 1
+        square: false
+        cards:
+        - type: grid
+          columns: 2
+          cards:
+          - type: custom:button-card
+            entity: cover.balcony_roller_shutter_level
+            icon: mdi:window-shutter
+            show_name: true
+            name: Balkon
+            size: 60%
+            tap_action:
+              action: call-service
+              service: script.popup_roller_shutter
+              service_data:
+                room_name:
+                - Balkon
+                entity_name:
+                - balcony
+                deviceID:
+                - this
+            styles:
+              icon:
+              - color: var(--paper-item-icon-color)
+              card:
+              - height: 100%
+          - type: custom:button-card
+            entity: cover.living_roller_shutter_level
+            icon: mdi:window-shutter
+            show_name: true
+            name: Wohnzimmer
+            size: 60%
+            tap_action:
+              action: call-service
+              service: script.popup_roller_shutter
+              service_data:
+                room_name:
+                - Wohnzimmer
+                entity_name:
+                - living
+                deviceID:
+                - this
+            styles:
+              icon:
+              - color: var(--paper-item-icon-color)
+              card:
+              - height: 100%
+  mode: single
+  alias: popup livingarea roller shutter
+popup_floor_light:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Flur Licht
+      card:
+        type: grid
+        columns: 1
+        square: false
+        cards:
+        - type: grid
+          cards:
+          - type: custom:button-card
+            entity: switch.floor_main_switch_switch
+            icon: mdi:wall-sconce-round
+            show_name: true
+            name: Kleines Flurlicht
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+          - type: custom:button-card
+            entity: switch.large_floor_main_light
+            icon: mdi:ceiling-light
+            show_name: true
+            name: Großes Flurlicht
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+          columns: 2
+        - type: custom:mini-graph-card
+          align_icon: left
+          align_state: left
+          hours_to_show: 72
+          tap_action:
+            action: none
+          entities:
+          - entity: sensor.floor_multi_sensor_luminance
+          icon: mdi:weather-sunny
+          name: Helligkeit
+          height: 80
+          show:
+            fill: true
+  mode: single
+  alias: popup floor light
+popup_other_light:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Licht
+      card:
+        type: grid
+        columns: 2
+        cards:
+        - entity: light.abstellraum
+          type: light
+        - type: custom:button-card
+          entity: switch.guest_main_light_switch
+          icon: mdi:wall-sconce-round
+          show_name: true
+          size: 60%
+          styles:
+            card:
+            - height: 100%
+  mode: single
+  alias: popup other light
+popup_floor_window:
+  alias: popup floor window
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Fenster
+      card:
+        type: grid
+        cards:
+        - type: custom:button-card
+          entity: sensor.window_kitchen_open_check
+          icon: mdi:window-closed-variant
+          show_state: false
+          show_name: true
+          name: Küche
+          size: 60%
+          styles:
+            icon:
+            - color: var(--paper-item-icon-color)
+            card:
+            - height: 100%
+          state:
+          - value: offen
+            icon: mdi:window-open-variant
+            styles:
+              icon:
+              - color: red
+        - type: custom:button-card
+          entity: sensor.window_balcony_open_check
+          icon: mdi:window-closed-variant
+          show_state: false
+          show_name: true
+          name: Balkon
+          size: 60%
+          styles:
+            icon:
+            - color: var(--paper-item-icon-color)
+            card:
+            - height: 100%
+          state:
+          - value: offen
+            icon: mdi:window-open-variant
+            styles:
+              icon:
+              - color: red
+        - type: custom:button-card
+          entity: sensor.window_living_open_check
+          icon: mdi:window-closed-variant
+          show_state: false
+          show_name: true
+          name: Wohnzimmer
+          size: 60%
+          styles:
+            icon:
+            - color: var(--paper-item-icon-color)
+            card:
+            - height: 100%
+          state:
+          - value: offen
+            icon: mdi:window-open-variant
+            styles:
+              icon:
+              - color: red
+        - type: custom:button-card
+          entity: sensor.window_bathroom_open_check
+          icon: mdi:window-closed-variant
+          show_state: false
+          show_name: true
+          name: Badezimmer
+          size: 60%
+          styles:
+            icon:
+            - color: var(--paper-item-icon-color)
+            card:
+            - height: 100%
+          state:
+          - value: offen
+            icon: mdi:window-open-variant
+            styles:
+              icon:
+              - color: red
+        - type: custom:button-card
+          entity: sensor.window_workingroom_open_check
+          icon: mdi:window-closed-variant
+          show_state: false
+          show_name: true
+          name: Arbeitszimmer
+          size: 60%
+          styles:
+            icon:
+            - color: var(--paper-item-icon-color)
+            card:
+            - height: 100%
+          state:
+          - value: offen
+            icon: mdi:window-open-variant
+            styles:
+              icon:
+              - color: red
+        - type: custom:button-card
+          entity: sensor.window_bedroom_open_check
+          icon: mdi:window-closed-variant
+          show_state: false
+          show_name: true
+          name: Schlafzimmer
+          size: 60%
+          styles:
+            icon:
+            - color: var(--paper-item-icon-color)
+            card:
+            - height: 100%
+          state:
+          - value: offen
+            icon: mdi:window-open-variant
+            styles:
+              icon:
+              - color: red
+  mode: single
+popup_floor_sleepmode:
+  alias: popup floor sleepmode
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Schlafmodus
+      card:
+        type: grid
+        columns: 1
+        square: false
+        cards:
+        - type: grid
+          cards:
+          - type: custom:button-card
+            entity: input_boolean.sleepmode_kitchen
+            icon: mdi:bed
+            show_name: true
+            name: Küche
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+            state:
+            - value: 'on'
+              styles:
+                icon:
+                - color: white
+                card:
+                - background-color:
+                  - grey
+          - type: custom:button-card
+            entity: input_boolean.sleepmode_living
+            icon: mdi:bed
+            show_name: true
+            name: Wohnzimmer
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+            state:
+            - value: 'on'
+              styles:
+                icon:
+                - color: white
+                card:
+                - background-color:
+                  - grey
+          - type: custom:button-card
+            entity: input_boolean.sleepmode_bathroom
+            icon: mdi:bed
+            show_name: true
+            name: Badezimmer
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+            state:
+            - value: 'on'
+              styles:
+                icon:
+                - color: white
+                card:
+                - background-color:
+                  - grey
+          - type: custom:button-card
+            entity: input_boolean.sleepmode_workingroom
+            icon: mdi:bed
+            show_name: true
+            name: Arbeitszimmer
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+            state:
+            - value: 'on'
+              styles:
+                icon:
+                - color: white
+                card:
+                - background-color:
+                  - grey
+          - type: custom:button-card
+            entity: input_boolean.sleepmode_bedroom
+            icon: mdi:bed
+            show_name: true
+            name: Schlafzimmer
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+            state:
+            - value: 'on'
+              styles:
+                icon:
+                - color: white
+                card:
+                - background-color:
+                  - grey
+          - type: custom:button-card
+            entity: input_boolean.sleepmode_guestroom
+            icon: mdi:bed
+            show_name: true
+            name: Gäste WC
+            size: 60%
+            styles:
+              card:
+              - height: 100%
+            state:
+            - value: 'on'
+              styles:
+                icon:
+                - color: white
+                card:
+                - background-color:
+                  - grey
+        - type: custom:button-card
+          entity: input_boolean.sleepmode
+          icon: mdi:bed
+          show_name: true
+          name: Überall
+          size: 20%
+          state:
+          - value: 'on'
+            styles:
+              icon:
+              - color: white
+              card:
+              - background-color:
+                - grey
+  mode: single
+popup_floor_charger:
+  alias: popup floor charger
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Ladegeräte
+      card:
+        cards:
+        - cards:
+          - entity: switch.charger_relay
+            hold_action:
+              action: more-info
+            icon: mdi:power-plug
+            name: Wohnzimmer
+            tap_action:
+              action: toggle
+            type: entity-button
+          - type: conditional
+            conditions:
+            - entity: switch.charger_relay
+              state: 'on'
+            card:
+              type: vertical-stack
+              cards:
+              - align_icon: left
+                align_state: left
+                entities:
+                - entity: sensor.charger_wattage
+                  show_legend: false
+                hours_to_show: 12
+                icon: mdi:power-plug
+                name: Aktueller Verbrauch
+                show:
+                  fill: false
+                type: custom:mini-graph-card
+              - type: button
+                tap_action:
+                  action: toggle
+                entity: input_boolean.automatic_charging_control
+                icon: mdi:power
+                name: Aufladen automatisch beenden
+          type: vertical-stack
+        - cards:
+          - entity: switch.power_charger_relay
+            hold_action:
+              action: more-info
+            icon: mdi:power-plug
+            name: Arbeitszimmer
+            tap_action:
+              action: toggle
+            type: entity-button
+          - type: conditional
+            conditions:
+            - entity: switch.power_charger_relay
+              state: 'on'
+            card:
+              align_icon: left
+              align_state: left
+              entities:
+              - entity: sensor.power_charger_wattage
+                show_legend: false
+              hours_to_show: 2
+              icon: mdi:power-plug
+              name: Aktueller Verbrauch
+              show:
+                fill: false
+              type: custom:mini-graph-card
+          type: vertical-stack
+        type: horizontal-stack
+  mode: single
+popup_floor_humidity:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Luftfeuchtigkeit
+      card:
+        type: vertical-stack
+        cards:
+        - type: horizontal-stack
+          cards:
+          - type: custom:button-card
+            entity: sensor.airquality_bathroom
+            name: Badezimmer
+            icon: mdi:weather-windy
+            show_state: true
+            tap_action:
+              action: call-service
+              service: script.popup_absolute_humidity
+              service_data:
+                room_name:
+                - Badezimmer
+                deviceID:
+                - this
+            styles:
+              name:
+              - color: white
+              state:
+              - color: white
+              - text-transform: uppercase
+              - font-weight: bold
+              icon:
+              - color: white
+              card:
+              - background-color: green
+            state:
+            - value: kritisch
+              styles:
+                card:
+                - background-color:
+                  - red
+            - value: zu hoch
+              styles:
+                card:
+                - background-color:
+                  - blue
+            - value: zu niedrig
+              styles:
+                card:
+                - background-color:
+                  - orange
+          - type: custom:button-card
+            entity: sensor.airquality_bedroom
+            name: Schlafzimmer
+            icon: mdi:weather-windy
+            show_state: true
+            tap_action:
+              action: call-service
+              service: script.popup_absolute_humidity
+              service_data:
+                room_name:
+                - Schlafzimmer
+                deviceID:
+                - this
+            styles:
+              name:
+              - color: white
+              state:
+              - color: white
+              - text-transform: uppercase
+              - font-weight: bold
+              icon:
+              - color: white
+              card:
+              - background-color: green
+            state:
+            - value: kritisch
+              styles:
+                card:
+                - background-color:
+                  - red
+            - value: zu hoch
+              styles:
+                card:
+                - background-color:
+                  - blue
+            - value: zu niedrig
+              styles:
+                card:
+                - background-color:
+                  - orange
+        - type: horizontal-stack
+          cards:
+          - type: custom:button-card
+            entity: sensor.airquality_living
+            name: Wohnzimmer
+            icon: mdi:weather-windy
+            show_state: true
+            tap_action:
+              action: call-service
+              service: script.popup_absolute_humidity
+              service_data:
+                room_name:
+                - Wohnzimmer
+                deviceID:
+                - this
+            styles:
+              name:
+              - color: white
+              state:
+              - color: white
+              - text-transform: uppercase
+              - font-weight: bold
+              icon:
+              - color: white
+              card:
+              - background-color: green
+            state:
+            - value: kritisch
+              styles:
+                card:
+                - background-color:
+                  - red
+            - value: zu hoch
+              styles:
+                card:
+                - background-color:
+                  - blue
+            - value: zu niedrig
+              styles:
+                card:
+                - background-color:
+                  - orange
+          - type: custom:button-card
+            entity: sensor.airquality_living
+            name: Küche
+            icon: mdi:weather-windy
+            show_state: true
+            tap_action:
+              action: call-service
+              service: script.popup_absolute_humidity
+              service_data:
+                room_name:
+                - Wohnzimmer
+                deviceID:
+                - this
+            styles:
+              name:
+              - color: white
+              state:
+              - color: white
+              - text-transform: uppercase
+              - font-weight: bold
+              icon:
+              - color: white
+              card:
+              - background-color: green
+            state:
+            - value: kritisch
+              styles:
+                card:
+                - background-color:
+                  - red
+            - value: zu hoch
+              styles:
+                card:
+                - background-color:
+                  - blue
+            - value: zu niedrig
+              styles:
+                card:
+                - background-color:
+                  - orange
+        - type: horizontal-stack
+          cards:
+          - type: custom:button-card
+            entity: sensor.airquality_storageroom
+            name: Abstellraum
+            icon: mdi:weather-windy
+            show_state: true
+            tap_action:
+              action: call-service
+              service: script.popup_absolute_humidity
+              service_data:
+                room_name:
+                - Abstellraum
+                deviceID:
+                - this
+            styles:
+              name:
+              - color: white
+              state:
+              - color: white
+              - text-transform: uppercase
+              - font-weight: bold
+              icon:
+              - color: white
+              card:
+              - background-color: green
+            state:
+            - value: kritisch
+              styles:
+                card:
+                - background-color:
+                  - red
+            - value: zu hoch
+              styles:
+                card:
+                - background-color:
+                  - blue
+            - value: zu niedrig
+              styles:
+                card:
+                - background-color:
+                  - orange
+          - type: custom:button-card
+            entity: sensor.airquality_workingroom
+            name: Arbeitszimmer
+            icon: mdi:weather-windy
+            show_state: true
+            tap_action:
+              action: call-service
+              service: script.popup_absolute_humidity
+              service_data:
+                room_name:
+                - Arbeitszimmer
+                deviceID:
+                - this
+            styles:
+              name:
+              - color: white
+              state:
+              - color: white
+              - text-transform: uppercase
+              - font-weight: bold
+              icon:
+              - color: white
+              card:
+              - background-color: green
+            state:
+            - value: kritisch
+              styles:
+                card:
+                - background-color:
+                  - red
+            - value: zu hoch
+              styles:
+                card:
+                - background-color:
+                  - blue
+            - value: zu niedrig
+              styles:
+                card:
+                - background-color:
+                  - orange
+  mode: single
+  alias: popup floor humidity
+popup_all_light:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Licht
+      card:
+        type: grid
+        columns: 1
+        square: false
+        cards:
+        - type: grid
+          cards:
+          - type: custom:button-card
+            entity: group.kitchen_light
+            icon: "[[[ if (states[\"input_boolean.force_occupied_kitchen\"].state\
+              \ == 'on'){\n  return \"mdi:lightbulb-on\"; } else if (states[\"input_boolean.force_light_off_kitchen\"\
+              ].state == 'on') {\n    return 'mdi:lightbulb-off'}else {return \"mdi:lightbulb-group-outline\"\
+              } ]]]"
+            show_name: true
+            name: Küche
+            size: 60%
+            tap_action:
+              action: call-service
+              service: script.popup_kitchen_light
+              service_data:
+                deviceID:
+                - this
+            hold_action:
+              action: toggle
+            styles:
+              name:
+              - font-size: 1.1rem
+              - bottom: 20px
+              icon:
+              - color: "[[[ if (states[\"input_boolean.force_occupied_kitchen\"].state\
+                  \ == 'on'){\n  return \"var(--paper-item-icon-active-color)\"; \n\
+                  \  } else if (states[\"input_boolean.force_light_off_kitchen\"].state\
+                  \ == 'on') {\n  return 'var(--paper-item-icon-active-color)'\n \
+                  \ } else if (entity.state == 'on') {\n    return \"var(--paper-item-icon-active-color)\"\
+                  \n  }\n  else {\n    return \"var(--paper-item-icon-color)\"\n \
+                  \  } ]]]"
+              card:
+              - height: 100%
+              custom_fields:
+                icon_hold_down:
+                - bottom: 5%
+                - right: 5%
+                - width: 20px
+                - color: '#757575'
+                - position: absolute
+            custom_fields:
+              icon_hold_down: "[[[\n    return `<ha-icon\n      icon=\"mdi:arrow-collapse-down\"\
+                >\n      </ha-icon>`\n  ]]]\n"
+          - type: custom:button-card
+            entity: group.living_light
+            icon: "[[[ if (states[\"input_boolean.force_occupied_living\"].state ==\
+              \ 'on'){\n  return \"mdi:lightbulb-on\"; } else if (states[\"input_boolean.force_light_off_living\"\
+              ].state == 'on') {\n  return 'mdi:lightbulb-off'}else {return \"mdi:lightbulb-group-outline\"\
+              } ]]]"
+            show_name: true
+            name: Wohnzimmer
+            size: 60%
+            tap_action:
+              action: call-service
+              service: script.popup_living_light
+              service_data:
+                deviceID:
+                - this
+            hold_action:
+              action: toggle
+            styles:
+              name:
+              - font-size: 1.1rem
+              icon:
+              - color: "[[[ if (states[\"input_boolean.force_occupied_living\"].state\
+                  \ == 'on'){\n  return \"var(--paper-item-icon-active-color)\"; \n\
+                  \  } else if (states[\"input_boolean.force_light_off_living\"].state\
+                  \ == 'on') {\n  return 'var(--paper-item-icon-active-color)'\n \
+                  \ } else if (entity.state == 'on') {\n    return \"var(--paper-item-icon-active-color)\"\
+                  \n  }\n  else {\n    return \"var(--paper-item-icon-color)\"\n \
+                  \  } ]]]"
+              card:
+              - height: 100%
+              custom_fields:
+                icon_hold_down:
+                - bottom: 5%
+                - right: 5%
+                - width: 20px
+                - color: '#757575'
+                - position: absolute
+            custom_fields:
+              icon_hold_down: "[[[\n    return `<ha-icon\n      icon=\"mdi:arrow-collapse-down\"\
+                >\n      </ha-icon>`\n  ]]]\n"
+          - type: custom:button-card
+            entity: group.bathroom_light
+            icon: "[[[ if (states[\"input_boolean.force_occupied_bathroom\"].state\
+              \ == 'on'){\n  return \"mdi:lightbulb-on\"; } else if (states[\"input_boolean.force_light_off_bathroom\"\
+              ].state == 'on') {\n  return 'mdi:lightbulb-off'}else {return \"mdi:lightbulb-group-outline\"\
+              } ]]]"
+            show_name: true
+            name: Badezimmer
+            size: 60%
+            tap_action:
+              action: call-service
+              service: script.popup_bathroom_light
+              service_data:
+                deviceID:
+                - this
+            hold_action:
+              action: toggle
+            styles:
+              name:
+              - font-size: 1.1rem
+              icon:
+              - color: "[[[ if (states[\"input_boolean.force_occupied_bathroom\"].state\
+                  \ == 'on'){\n  return \"var(--paper-item-icon-active-color)\"; \n\
+                  \  } else if (states[\"input_boolean.force_light_off_bathroom\"\
+                  ].state == 'on') {\n  return 'var(--paper-item-icon-active-color)'\n\
+                  \  } else if (entity.state == 'on') {\n    return \"var(--paper-item-icon-active-color)\"\
+                  \n  }\n  else {\n    return \"var(--paper-item-icon-color)\"\n \
+                  \  } ]]]"
+              card:
+              - height: 100%
+              custom_fields:
+                icon_hold_down:
+                - bottom: 5%
+                - right: 5%
+                - width: 20px
+                - color: '#757575'
+                - position: absolute
+            custom_fields:
+              icon_hold_down: "[[[\n    return `<ha-icon\n      icon=\"mdi:arrow-collapse-down\"\
+                >\n      </ha-icon>`\n  ]]]\n"
+          - type: custom:button-card
+            entity: group.workingroom_light
+            icon: "[[[ if (states[\"input_boolean.force_occupied_workingroom\"].state\
+              \ == 'on'){\n  return \"mdi:lightbulb-on\"; } else if (states[\"input_boolean.force_light_off_workingroom\"\
+              ].state == 'on') {\n  return 'mdi:lightbulb-off'}else {return \"mdi:lightbulb-group-outline\"\
+              } ]]]"
+            show_name: true
+            name: Arbeitszimmer
+            size: 60%
+            tap_action:
+              action: call-service
+              service: script.popup_workingroom_light
+              service_data:
+                deviceID:
+                - this
+            hold_action:
+              action: toggle
+            styles:
+              name:
+              - font-size: 1.1rem
+              icon:
+              - color: "[[[ if (states[\"input_boolean.force_occupied_workingroom\"\
+                  ].state == 'on'){\n  return \"var(--paper-item-icon-active-color)\"\
+                  ; \n  } else if (states[\"input_boolean.force_light_off_workingroom\"\
+                  ].state == 'on') {\n  return 'var(--paper-item-icon-active-color)'\n\
+                  \  } else if (entity.state == 'on') {\n    return \"var(--paper-item-icon-active-color)\"\
+                  \n  }\n  else {\n    return \"var(--paper-item-icon-color)\"\n \
+                  \  } ]]]"
+              card:
+              - height: 100%
+              custom_fields:
+                icon_hold_down:
+                - bottom: 5%
+                - right: 5%
+                - width: 20px
+                - color: '#757575'
+                - position: absolute
+            custom_fields:
+              icon_hold_down: "[[[\n    return `<ha-icon\n      icon=\"mdi:arrow-collapse-down\"\
+                >\n      </ha-icon>`\n  ]]]\n"
+          - type: custom:button-card
+            entity: group.bedroom_light
+            icon: "[[[ if (states[\"input_boolean.force_occupied_bedroom\"].state\
+              \ == 'on'){\n  return \"mdi:lightbulb-on\"; } else if (states[\"input_boolean.force_light_off_bedroom\"\
+              ].state == 'on') {\n  return 'mdi:lightbulb-off'}else {return \"mdi:lightbulb-group-outline\"\
+              } ]]]"
+            show_name: true
+            name: Schlafzimmer
+            size: 60%
+            tap_action:
+              action: call-service
+              service: script.popup_bedroom_light
+              service_data:
+                deviceID:
+                - this
+            hold_action:
+              action: toggle
+            styles:
+              name:
+              - font-size: 1.1rem
+              icon:
+              - color: "[[[ if (states[\"input_boolean.force_occupied_bedroom\"].state\
+                  \ == 'on'){\n  return \"var(--paper-item-icon-active-color)\"; \n\
+                  \  } else if (states[\"input_boolean.force_light_off_bedroom\"].state\
+                  \ == 'on') {\n  return 'var(--paper-item-icon-active-color)'\n \
+                  \ } else if (entity.state == 'on') {\n    return \"var(--paper-item-icon-active-color)\"\
+                  \n  }\n  else {\n    return \"var(--paper-item-icon-color)\"\n \
+                  \  } ]]]"
+              card:
+              - height: 100%
+              custom_fields:
+                icon_hold_down:
+                - bottom: 5%
+                - right: 5%
+                - width: 20px
+                - color: '#757575'
+                - position: absolute
+            custom_fields:
+              icon_hold_down: "[[[\n    return `<ha-icon\n      icon=\"mdi:arrow-collapse-down\"\
+                >\n      </ha-icon>`\n  ]]]\n"
+          - type: custom:button-card
+            entity: group.floor_light
+            icon: mdi:lightbulb-group-outline
+            show_name: true
+            name: Flur
+            size: 60%
+            hold_action:
+              action: toggle
+            tap_action:
+              action: call-service
+              service: script.popup_floor_light
+              service_data:
+                deviceID:
+                - this
+            styles:
+              name:
+              - font-size: 1.1rem
+              card:
+              - height: 100%
+              custom_fields:
+                icon_hold_down:
+                - bottom: 5%
+                - right: 5%
+                - width: 20px
+                - color: '#757575'
+                - position: absolute
+            custom_fields:
+              icon_hold_down: "[[[\n    return `<ha-icon\n      icon=\"mdi:arrow-collapse-down\"\
+                >\n      </ha-icon>`\n  ]]]\n"
+          columns: 2
+        - type: custom:button-card
+          entity: group.other_light
+          icon: mdi:lightbulb-group-outline
+          show_name: true
+          name: Andere
+          size: 60%
+          hold_action:
+            action: toggle
+          tap_action:
+            action: call-service
+            service: script.popup_other_light
+            service_data:
+              deviceID:
+              - this
+          styles:
+            name:
+            - font-size: 1.1rem
+            icon:
+            - height: 130px
+            custom_fields:
+              icon_hold_down:
+              - bottom: 5%
+              - right: 5%
+              - width: 20px
+              - color: '#757575'
+              - position: absolute
+          custom_fields:
+            icon_hold_down: "[[[\n    return `<ha-icon\n      icon=\"mdi:arrow-collapse-down\"\
+              >\n      </ha-icon>`\n  ]]]\n"
+  mode: single
+  alias: popup all light
+popup_light_test:
+  alias: popup light test
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: Light Test
+      style:
+        $: ".mdc-dialog .mdc-dialog__container {\n  width: 100%;\n}\n.mdc-dialog .mdc-dialog__container\
+          \ .mdc-dialog__surface {\n  width:100%;\n  box-shadow:none;\n}\n"
+        .: ":host {\n  --mdc-theme-surface: rgba(0,0,0,0);\n  --secondary-background-color:\
+          \ rgba(0,0,0,0);\n  --ha-card-background: rgba(0,0,0,0);\n  --mdc-dialog-scrim-color:\
+          \ rgba(0,0,0,0.8);\n  --mdc-dialog-min-height: 100%;\n  --mdc-dialog-min-width:\
+          \ 100%;\n  --mdc-dialog-max-width: 100%;\n}\nmwc-icon-button {\n  color:\
+          \ #FFF;\n}\n"
+      card:
+        type: custom:light-popup-card
+        entity: light.arbeitszimmer_tv_licht
+        fullscreen: false
+        actions:
+        - service: scene.turn_on
+          service_data:
+            entity_id: scene.energie
+          color: '#8BCBDD'
+          name: energie
+        - service: homeassistant.toggle
+          service_data:
+            entity_id: light.voordeurlicht
+          name: voordeur
+          icon: mdi:lightbulb
+  mode: single
+popup_test:
+  alias: popup test toast
+  sequence:
+  - service: browser_mod.toast
+    data:
+      title: Popup Toast example
+      duration: 2000
+      mesage: Kurze Meldung
+  mode: single
+popup_test_2:
+  alias: popup test
+  sequence:
+  - service: browser_mod.popup
+    data:
+      title: Popup example
+      card:
+        type: entities
+        entities:
+        - entity: binary_sensor.kuche_secondary_motion
+        - entity: binary_sensor.badezimmer_motion
+        - entity: binary_sensor.abstellkammer_motion
+        - entity: binary_sensor.gastewc_motion
+        - entity: binary_sensor.badezimmer_dusche_motion
+        title: Bewegungsmelder Zigbee
+      deviceID:
+      - skyspad
+      - macbook-arbeit-chrome
+  mode: single
+popup_floor_show_windows_open:
+  alias: popup floor show windows open
+  sequence:
+  - service: browser_mod.popup
+    data:
+      title: Fenster
+      card:
+        type: grid
+        cards:
+        - type: custom:button-card
+          entity: sensor.window_kitchen_open_check
+          icon: mdi:window-closed-variant
+          show_state: false
+          show_name: true
+          name: Küche
+          size: 60%
+          styles:
+            icon:
+            - color: var(--paper-item-icon-color)
+            card:
+            - height: 100%
+          state:
+          - value: offen
+            icon: mdi:window-open-variant
+            styles:
+              icon:
+              - color: red
+        - type: custom:button-card
+          entity: sensor.window_balcony_open_check
+          icon: mdi:window-closed-variant
+          show_state: false
+          show_name: true
+          name: Balkon
+          size: 60%
+          styles:
+            icon:
+            - color: var(--paper-item-icon-color)
+            card:
+            - height: 100%
+          state:
+          - value: offen
+            icon: mdi:window-open-variant
+            styles:
+              icon:
+              - color: red
+        - type: custom:button-card
+          entity: sensor.window_living_open_check
+          icon: mdi:window-closed-variant
+          show_state: false
+          show_name: true
+          name: Wohnzimmer
+          size: 60%
+          styles:
+            icon:
+            - color: var(--paper-item-icon-color)
+            card:
+            - height: 100%
+          state:
+          - value: offen
+            icon: mdi:window-open-variant
+            styles:
+              icon:
+              - color: red
+        - type: custom:button-card
+          entity: sensor.window_bathroom_open_check
+          icon: mdi:window-closed-variant
+          show_state: false
+          show_name: true
+          name: Badezimmer
+          size: 60%
+          styles:
+            icon:
+            - color: var(--paper-item-icon-color)
+            card:
+            - height: 100%
+          state:
+          - value: offen
+            icon: mdi:window-open-variant
+            styles:
+              icon:
+              - color: red
+        - type: custom:button-card
+          entity: sensor.window_workingroom_open_check
+          icon: mdi:window-closed-variant
+          show_state: false
+          show_name: true
+          name: Arbeitszimmer
+          size: 60%
+          styles:
+            icon:
+            - color: var(--paper-item-icon-color)
+            card:
+            - height: 100%
+          state:
+          - value: offen
+            icon: mdi:window-open-variant
+            styles:
+              icon:
+              - color: red
+        - type: custom:button-card
+          entity: sensor.window_bedroom_open_check
+          icon: mdi:window-closed-variant
+          show_state: false
+          show_name: true
+          name: Schlafzimmer
+          size: 60%
+          styles:
+            icon:
+            - color: var(--paper-item-icon-color)
+            card:
+            - height: 100%
+          state:
+          - value: offen
+            icon: mdi:window-open-variant
+            styles:
+              icon:
+              - color: red
+      deviceID:
+      - tablet_arbeitszimmer
+  - service: script.close_popup_time
+    data: {}
+  mode: single
+popup_absolute_humidity:
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      large: true
+      deviceID: '{{ deviceID }}'
+      title: Absolute Luftfeuchtigkeit
+      card:
+        align_icon: left
+        align_state: left
+        hours_to_show: 24
+        color_thresholds:
+        - color: '#42aaf5'
+          value: 6
+        - color: '#42f55a'
+          value: 10
+        - color: '#b00426'
+          value: 12
+        tap_action:
+          action: none
+        entities:
+        - entity: sensor.{{ room_name | first | lower }}_absolute_luftfeuchtigkeit
+          show_legend: true
+          name: '{{ room_name | first }}'
+        icon: mdi:thermometer
+        name: '{{ room_name | first }}'
+        show:
+          fill: true
+        type: custom:mini-graph-card
+  mode: single
+  alias: popup absolute humidity
+popup_washing_started:
+  alias: popup washing started
+  sequence:
+  - service: browser_mod.popup
+    data:
+      title: Waschmaschine gestartet
+      card:
+        cards:
+        - type: picture-elements
+          image: /local/washer-dryer/background1x1.png
+          elements:
+          - type: image
+            image: /local/washer-dryer/washer-500.png
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              service_data:
+                entity_id: switch.washing_switch
+            hold_action:
+              action: more-info
+              service_data:
+                entity_id: switch.washing_switch
+            style:
+              left: 50%
+              top: 50%
+              width: 80%
+          - type: custom:circle-sensor-card
+            fill: rgba(66, 66, 66)
+            attribute_max: orig_value
+            entity: sensor.washing_time_rest
+            font_style:
+              font-size: 0
+              text-align: center
+            show_card: false
+            stroke_width: 15
+            style:
+              height: 40%
+              width: 40%
+              left: 50%
+              top: 55%
+          - type: state-label
+            entity: sensor.washing_time_rest
+            style:
+              color: '#99d6ff'
+              right: 16%
+              top: 12%
+              font-size: 300%
+              transform: initial
+          - type: state-label
+            entity: sensor.washing_machine_status
+            style:
+              left: 50%
+              top: 85%
+              font-size: 160%
+        - type: conditional
+          conditions:
+          - entity: switch.washing_switch
+            state: 'on'
+          card:
+            type: entities
+            entities:
+            - entity: input_select.waschprogramme
+        type: vertical-stack
+      deviceID:
+      - tablet_arbeitszimmer
+  - service: script.turn_on
+    entity_id: script.close_popup_time
+  mode: single
+close_popup_time:
+  alias: close popup time
+  sequence:
+  - service: rest_command.trigger_motion
+    data: {}
+  - service: rest_command.change_setting_string
+    data:
+      key: timeToScreenOffV2
+      value: 0
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: browser_mod.close_popup
+    data: {}
+  - service: rest_command.change_setting_string
+    data:
+      key: timeToScreenOffV2
+      value: 30
+  mode: single
+popup_disher_started:
+  alias: popup disher started
+  sequence:
+  - service: browser_mod.popup
+    data:
+      title: Spülmaschine gestartet
+      card:
+        cards:
+        - type: picture-elements
+          image: /local/washer-dryer/background1x1.png
+          elements:
+          - type: image
+            image: /local/washer-dryer/dishwasher-500.png
+            style:
+              left: 50%
+              top: 50%
+              width: 80%
+          - type: custom:circle-sensor-card
+            fill: rgba(255, 255, 255, 0)
+            attribute_max: orig_value
+            entity: sensor.disher_time_rest
+            font_style:
+              font-size: 0
+              text-align: center
+            show_card: false
+            stroke_width: 15
+            style:
+              height: 40%
+              width: 40%
+              left: 50%
+              top: 55%
+          - type: state-label
+            entity: sensor.disher_time_rest
+            style:
+              color: '#99d6ff'
+              right: 16%
+              top: 12%
+              font-size: 300%
+              transform: initial
+          - type: state-label
+            entity: sensor.dishwasher_status
+            style:
+              left: 50%
+              top: 85%
+              font-size: 160%
+        - type: conditional
+          conditions:
+          - entity: sensor.dishwasher_status
+            state: Leerlauf
+          card:
+            type: entities
+            entities:
+            - entity: input_select.dishwasher_programs
+            show_header_toggle: false
+        type: vertical-stack
+      deviceID:
+      - skyspad
+      - macbook-arbeit-chrome
+  - service: script.turn_on
+    entity_id: script.close_popup_time
+  mode: single
+popup_roller_shutter:
+  alias: popup roller shutter
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      deviceID: '{{ deviceID }}'
+      title: '{{ room_name | first }} Rollo'
+      card:
+        cards:
+        - cards:
+          - aspect_ratio: 0%
+            entity: script.{{ room_name | first | lower }}_rollo_hoch
+            image: /local/roller_shutter/roller_shutter_open.png
+            name: Hoch
+            show_state: false
+            tap_action:
+              action: toggle
+            type: picture-entity
+          - aspect_ratio: 0%
+            entity: script.{{ room_name | first | lower }}_rollo_50
+            image: /local/roller_shutter/roller_shutter_sunshade.png
+            name: Sonnenschutz
+            show_state: false
+            tap_action:
+              action: toggle
+            type: picture-entity
+          - aspect_ratio: 0%
+            entity: script.{{ room_name | first | lower }}_rollo_runter
+            image: /local/roller_shutter/roller_shutter_closed.png
+            name: Runter
+            show_state: false
+            tap_action:
+              action: toggle
+            type: picture-entity
+          type: horizontal-stack
+        - entities:
+          - entity: input_boolean.rollo_automatik_{{ room_name | first | lower }}
+            name: Automatische Steuerung
+          - type: divider
+          - entity: cover.{{ entity_name | first | lower }}_roller_shutter_level
+          show_header_toggle: false
+          type: entities
+        type: vertical-stack
+  mode: single
+popup_frontdoor_alert:
+  alias: popup frontdoor alert
+  sequence:
+  - service: browser_mod.popup
+    data:
+      title: Haustür Warnung
+      large: true
+      hide_header: true
+      card:
+        type: custom:button-card
+        entity: sun.sun
+        icon: mdi:door
+        show_name: true
+        name: Haustür steht offen
+        size: 80%
+        styles:
+          card:
+          - background: red
+          name:
+          - color: white
+          - font-weight: bold
+          icon:
+          - color: white
+          - animation: blink 1.5s ease infinite
+      deviceID:
+      - tablet_arbeitszimmer
+  mode: single
+popup_battery_status:
+  alias: popup battery status
+  sequence:
+  - service: browser_mod.popup
+    data_template:
+      large: true
+      deviceID: '{{ deviceID }}'
+      title: Batteriestand
+      card:
+        type: custom:button-card
+        entity: '{{ deviceID | first }}'
+        icon: mdi:battery
+        show_name: true
+        show_state: false
+        name: "[[[\n  return states['{{ deviceID | first }}'].attributes.battery_level\
+          \ + '% Batterieladung'\n]]]\n"
+        size: 60%
+  mode: single
+start_robot_cleaner:
+  alias: start robot cleaner
+  sequence:
+  - service: media_player.play_media
+    data:
+      media_content_id: wischen starten
+      media_content_type: routine
+    entity_id: media_player.arbeitszimmer
+  mode: single
+  icon: mdi:robot-vacuum-variant
+start_robot_vacuum:
+  alias: start robot vacuum
+  sequence:
+  - service: media_player.play_media
+    data:
+      media_content_id: saugen starten
+      media_content_type: routine
+    entity_id: media_player.arbeitszimmer
+  mode: single
+  icon: mdi:robot-vacuum
+start_powersnap_or_sleep:
+  alias: start powersnap or sleep
+  sequence:
+  - choose:
+    - conditions:
+      - condition: time
+        after: '14:00:00'
+        before: '21:00:00'
+      sequence:
+      - service: input_boolean.turn_on
+        data: {}
+        entity_id: input_boolean.nickerchen_aktiv
+    - conditions:
+      - condition: time
+        after: '21:00:00'
+        before: '14:00:00'
+      sequence:
+      - service: input_boolean.toggle
+        data: {}
+        entity_id: input_boolean.sleepmode
+    default: []
+  mode: single
+  icon: mdi:sleep

@@ -1,0 +1,340 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret lat
+  longitude: !secret lng
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 454
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Berlin
+
+  customize: !include customize.yaml
+
+config:
+
+http:
+  cors_allowed_origins:
+    - https://cast.home-assistant.io
+
+# Track the sun
+sun:
+
+browser_mod:
+
+remote:
+  - platform: broadlink
+    host: 192.168.1.108
+    mac: '34:EA:34:58:BA:89'
+    type: rm_mini
+
+roomba:
+  - host: 192.168.1.42
+    blid: !secret braava_jet_blid
+    password: !secret braava_jet_password
+
+ios:
+  push:
+    categories:
+      - name: disturb
+        identifier: 'disturb'
+        actions:
+          - identifier: 'DISTURB_OFF'
+            title: 'Beschäftig Meldung abschalten'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+          - identifier: 'DISTURB_ON'
+            title: 'Beschäftig Meldung anlassen'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+      - name: coffee
+        identifier: 'coffee'
+        actions:
+          - identifier: 'COFFEE_SET_TIME'
+            title: 'Ja, zur gleichen Zeit'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+          - identifier: 'COFFE_CHANGE_TIME'
+            title: 'Ja, aber eine andere Zeit'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'textInput'
+            textInputButtonTitle: 'Neue Zeit'
+            textInputPlaceholder: '06:00'
+          - identifier: 'COFFE_DISABLE_TIME'
+            title: 'Nein, kein Timer für morgen'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+      - name: coffee_prepared
+        identifier: 'coffee_prepared'
+        actions:
+          - identifier: 'COFFE_PREPARED'
+            title: 'Ist vorbereitet'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+          - identifier: 'COFFE_NOT_PREPARED'
+            title: 'Ist nicht vorbereitet'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+      - name: weekend_work
+        identifier: 'weekend_work'
+        actions:
+          - identifier: 'WORKING_SATURDAY'
+            title: 'Morgen Dienst'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+          - identifier: 'NOT_WORKING_SATURDAY'
+            title: 'Kein Dienst'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+
+      - name: washing_program
+        identifier: 'washing_program'
+        actions:
+          - identifier: 'BAUMWOLLE_90'
+            title: 'BAUMWOLLE 90°'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+
+          - identifier: 'BAUMWOLLE_ECO_60'
+            title: 'BAUMWOLLE ECO 60 C°'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+
+          - identifier: 'ECO_20'
+            title: 'ECO 20°'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+
+          - identifier: 'EXPRESS_15_MIN'
+            title: 'EXPRESS 15 MIN'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+
+          - identifier: ' '
+            title: 'TÄGLICH 60 MIN'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+
+          - identifier: 'ANDERE'
+            title: 'Andere'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+
+      - name: disher_program
+        identifier: 'disher_program'
+        actions:
+          - identifier: 'ECO'
+            title: 'Eco (237 Min)'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+
+          - identifier: 'NORMAL'
+            title: 'Normal (137 Min)'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+
+          - identifier: 'INTENSIV'
+            title: 'Intensiv (180 Min)'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+
+          - identifier: 'SCHNELL'
+            title: 'Schnell (39 Minuten)'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+
+          - identifier: 'VORSPUELEN'
+            title: 'Vorspülen (11 Minuten)'
+            activationMode: 'background'
+            authenticationRequired: false
+            destructive: false
+            behavior: 'default'
+
+
+#mobile_app:
+
+device_tracker:
+  - platform: fritz
+    host: 192.168.1.1
+  - platform: nmap_tracker
+    hosts:
+      - 192.168.1.36 #nintendo switch
+    home_interval: 10
+    exclude:
+      - 192.168.1.2 #Home Assistant
+
+system_health:
+
+cloud:
+
+
+logger:
+  default: critical
+
+weather:
+  - platform: openweathermap
+    api_key: !secret openweathermap_api
+    mode: daily
+
+zwave:
+  usb_path: /dev/ttyUSB0
+
+frontend:
+  !include configurations/themes_and_extra_html.yaml
+
+shell_command:
+  !include configurations/shell_command.yaml
+
+tuya:
+  username: !secret tuya_email
+  password: !secret tuya_password
+  country_code: 49
+
+homekit:
+   - filter:
+      include_entities:
+        - switch.workingroom_light_switch
+        - light.stehlicht
+        - switch.arbeitszimmer_tv_relay
+        - switch.workingroom_xbox_switch_switch
+        - switch.xbox_2_relay
+        - input_boolean.force_light_off_workingroom
+        - input_boolean.force_occupied_workingroom
+        - cover.living_roller_shutter_level
+        - cover.balcony_roller_shutter_level
+        - cover.workingroom_roller_shutter_level
+        - cover.kitchen_roller_shutter_level
+        - cover.bathroom_roller_shutter_level
+        - cover.bedroom_roller_shutter_level
+        - switch.skynas
+        - input_boolean.zeit_fur_ein_update
+        - switch.bedroom_tv_switch_switch
+        - input_number.sleeptimer_schlafzimmer_tv
+        - input_boolean.sleepmode
+        - input_boolean.zeit_fur_ein_update
+        - input_boolean.nickerchen_aktiv
+        - input_number.sleeptimer_schlafzimmer_tv
+        - sensor.window_open_check
+
+input_text:
+  !include configurations/input_text.yaml
+
+rest_command:
+  trigger_motion:
+    url: "http://192.168.1.187:2323/?cmd=triggerMotion&password=secret"
+  change_setting_string:
+    url: "http://192.168.1.187:2323//?cmd=setStringSetting&key={{key}}&value={{value}}&password=secret"
+  change_setting_boolean:
+    url: "http://192.168.1.187:2323//?cmd=setBooleanSetting&key={{key}}&value={{value}}&password=secret"
+  fake_notify:
+    url: http://localhost:8123/api/services/input_text/set_value
+    method: POST
+    headers:
+      Authorization: !secret ha_auth_key
+      Content-Type: 'application/json'
+    payload: '{"entity_id": "input_text.message_module","value": "{{ value }}"}'
+
+history:
+  !include configurations/history.yaml
+
+zone:
+  !include configurations/zone.yaml
+
+spotify:
+  client_id: !secret spotify_clientid
+  client_secret: !secret spotify_clientsecret
+
+influxdb:
+
+recorder:
+  !include configurations/recorder.yaml
+
+logbook:
+
+sensor:
+  !include configurations/sensor.yaml
+
+binary_sensor:
+  !include configurations/binary_sensor.yaml
+
+media_player:
+  !include configurations/media_player.yaml
+
+switch:
+  !include configurations/switch.yaml
+
+telegram_bot:
+  !include configurations/telegram_bot.yaml
+
+notify:
+  !include configurations/notify.yaml
+
+input_boolean:
+  !include configurations/input_boolean.yaml
+
+input_datetime:
+
+counter:
+
+timer:
+
+input_select:
+  !include configurations/input_select.yaml
+
+input_number:
+  !include configurations/input_number.yaml
+
+alert:
+  !include configurations/alert.yaml
+
+group: !include_dir_merge_named group/
+
+scene: !include scenes.yaml
+
+automation: !include automations.yaml
+
+script: !include scripts.yaml
+
+alexa:
+
+intent_script: !include_dir_merge_named alexa/

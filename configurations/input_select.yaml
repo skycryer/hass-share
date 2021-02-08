@@ -1,0 +1,49 @@
+scene_select:
+  name: Szene wählen
+  options:
+    - Keine Szene gewählt
+    - Alles aus
+    - Xbox
+    - Nintendo Switch
+  initial: Keine Szene gewählt
+lightprofile_select:
+  name: Licht Profil wählen
+  options:
+    - Kein Profil
+    - Rot
+    - Blau
+    - Grün
+    - Warm
+  initial: Kein Profil
+spotify_scene_select:
+  name: Playlist wählen
+  options:
+    - Keine Playlist gewählt
+    - Party
+    - Favorites
+    - Romantic
+    - Discover Weekly
+    - On Repeat
+  initial: Keine Playlist gewählt
+
+waschprogramme:
+  name: Waschprogramme
+  icon: mdi:washing-machine
+  options:
+    - Kein Program gewählt
+    - BAUMWOLLE 90°
+    - BAUMWOLLE MIT VORWÄSCHE
+    - BAUMWOLLE ECO 60 C°
+    - BAUMWOLLE 40 C°
+    - ECO 20°
+    - PFLEGELEICHT
+    - WOLLE
+    - KLARSPÜLEN
+    - SCHLEUDERN
+    - HANDWÄSCHE DELIKAT
+    - SPORT
+    - MISCHEN
+    - HEMDEN
+    - TÄGLICH 60 MIN
+    - EXPRESS 15 MIN
+  initial: Kein Program gewählt

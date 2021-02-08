@@ -1,0 +1,5 @@
+platform: polling
+api_key: !secret telegram_server_api
+allowed_chat_ids:
+  - !secret telegram_server_client_id
+  - !secret telegram_wohnung_client_id

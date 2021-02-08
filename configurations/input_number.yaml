@@ -1,0 +1,50 @@
+change_color_timer:
+    name: Neue Farbe alle X Minuten
+    initial: 15
+    min: 1
+    max: 60
+random_minute:
+    name: Zufalls Minute
+    initial: 0
+    min: 0
+    max: 59
+server_shutdown_timer:
+    name: Server Shutdown delay
+    initial: 20
+    min: 5
+    max: 150
+    mode: box
+    step: 5
+    unit_of_measurement: Minuten
+
+alexa_kitchen_volume:
+    name: Alexa Lautstärke Küche
+    initial: 8
+    min: 1
+    max: 10
+alexa_bedroom_volume:
+    name: Alexa Lautstärke Schlafzimmer
+    initial: 5
+    min: 1
+    max: 10
+alexa_living_volume:
+    name: Alexa Lautstärke Wohnzimmer
+    initial: 8
+    min: 1
+    max: 10
+alexa_workingroom_volume:
+    name: Alexa Lautstärke Arbeitszimmer
+    initial: 3
+    min: 1
+    max: 10
+alexa_max_volume:
+    name: Alexa Max Lautstärke
+    initial: 8
+    min: 1
+    max: 10
+
+living_volume:
+    name: Wohnzimmer Lautstärke
+    initial: 40
+    min: 0
+    max: 100

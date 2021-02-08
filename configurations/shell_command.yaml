@@ -1,0 +1,11 @@
+skynas_off: 'curl http://192.168.1.3/all_serverapps_menu/serverSleep/server-sleep.php'
+backup_server_off: 'ssh skycryer@herzogin.ddns.net "sudo shutdown -h now"'
+comlicated_app: 'curl https://customcomplication.mikelyons.org/complicated/set/b3e5c3ac/{{ complications }}?value={{ value | urlencode }}'
+
+
+phillips_living_source: 'curl -X POST -d "{\"key\":\"Source\"}" http://192.168.1.21:1925/6/input/key'
+phillips_living_left: 'curl -X POST -d "{\"key\":\"CursorLeft\"}" http://192.168.1.21:1925/6/input/key'
+phillips_living_right: 'curl -X POST -d "{\"key\":\"CursorRight\"}" http://192.168.1.21:1925/6/input/key'
+phillips_living_confirm: 'curl -X POST -d "{\"key\":\"Confirm\"}" http://192.168.1.21:1925/6/input/key'
+# more commands jointspace / philips SAPHI os api / https://github.com/eslavnov/pylips#setting-up-pylips
+

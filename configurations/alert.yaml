@@ -1,0 +1,104 @@
+window_living:
+  name: Wohnzimmer Fenster ist noch offen
+  entity_id: sensor.window_open_check_living
+  state: 'offen'
+  repeat:
+    - 60
+    - 15
+    - 5
+  can_acknowledge: True
+  skip_first: true
+  notifiers:
+    - send_to_input_text
+
+window_bedroom:
+  name: Schlafzimmer Fenster ist noch offen
+  entity_id: sensor.window_bedroom_status
+  state: 'offen'
+  repeat:
+    - 60
+    - 15
+    - 5
+  can_acknowledge: True
+  skip_first: true
+  notifiers:
+    - send_to_input_text
+
+window_bathroom:
+  name: Badezimmer Fenster ist noch offen
+  entity_id: sensor.window_bathroom_status
+  state: 'offen'
+  repeat:
+    - 60
+    - 15
+    - 5
+  can_acknowledge: True
+  skip_first: true
+  notifiers:
+    - send_to_input_text
+
+window_kitchen:
+  name: Küchen Fenster ist noch offen
+  entity_id: sensor.window_kitchen_status
+  state: 'offen'
+  repeat:
+    - 60
+    - 15
+    - 5
+  can_acknowledge: True
+  skip_first: true
+  notifiers:
+    - send_to_input_text
+
+window_balcony:
+  name: Balkon Fenster ist noch offen
+  entity_id: sensor.window_balcony_status
+  state: 'offen'
+  repeat:
+    - 60
+    - 15
+    - 5
+  can_acknowledge: True
+  skip_first: true
+  notifiers:
+    - send_to_input_text
+
+window_workingroom:
+  name: Arbeitszimmer Fenster ist noch offen
+  entity_id: sensor.window_workingroom_status
+  state: 'offen'
+  repeat:
+    - 60
+    - 15
+    - 5
+  can_acknowledge: True
+  skip_first: true
+  notifiers:
+    - send_to_input_text
+
+
+washing_machine_input:
+  name: Waschmaschine ist fertig
+  entity_id: input_boolean.washing_machine_switch
+  state: 'on'
+  repeat:
+    - 1
+    - 5
+  message: Waschmaschine ist fertig, bitte ausräumen
+  can_acknowledge: True
+  skip_first: true
+  notifiers:
+    - send_to_input_text
+
+dishwasher_input:
+  name: Spülmaschine ist fertig
+  entity_id: input_boolean.dishwasher_done
+  state: 'on'
+  repeat:
+    - 1
+    - 5
+  message: Spülmaschine ist fertig, bitte öffnen zum auskühlen
+  can_acknowledge: True
+  skip_first: true
+  notifiers:
+    - send_to_input_text

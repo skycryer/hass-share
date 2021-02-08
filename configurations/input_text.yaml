@@ -1,0 +1,4 @@
+message_module:
+  name: Message Module
+  initial: Nachricht hier hin
+  max: 500
