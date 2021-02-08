@@ -1,65 +1,18 @@
-wo_ist_christians_handy:
-  alias: wo ist christians handy
-  mode: single
-  sequence:
-  - data:
-      account: c.schimanski@gmx.net
-      device_name: SkysPhone
-    service: icloud.play_sound
-set_device_work:
-  alias: set location Work
-  sequence:
-  - service: device_tracker.see
-    data:
-      gps:
-      - 51.21802
-      - 6.748613
-      gps_accuracy: 0
-      dev_id: skysphone
-      location_name: arbeit
-set_device_home:
-  alias: set location Home
-  sequence:
-  - service: device_tracker.see
-    data:
-      gps:
-      - 50.824303
-      - 6.475214
-      gps_accuracy: 0
-      dev_id: skysphone
-      location_name: home
-set_device_not_home:
-  alias: set location Not Home
-  sequence:
-  - service: device_tracker.see
-    data:
-      dev_id: skysphone
-      location_name: not_home
-set_device_elitsa_home:
-  alias: set elitsa location Home
-  sequence:
-  - service: device_tracker.see
-    data:
-      gps:
-      - 50.824303
-      - 6.475214
-      dev_id: iphone
-      location_name: home
-set_device_elitsa_not_home:
-  alias: set location Elitsa Not Home
+set_device_eli_not_home:
+  alias: set location eli Not Home
   sequence:
   - service: device_tracker.see
     data:
       dev_id: iphone
       location_name: not_home
-messages_to_elitsa:
+messages_to_eli:
   sequence:
   - condition: state
-    entity_id: person.elitsa
+    entity_id: person.eli
     state: home
   - data_template:
       message: '{{ message }}'
-    service: notify.devices_elitsa
+    service: notify.devices_eli
   mode: single
 messages_to_christian:
   sequence:
@@ -81,7 +34,7 @@ open_windows_message_christian:
   - condition: state
     entity_id: person.christian
     state: home
-  - service: notify.mobile_app_skysphone
+  - service: notify.mobile_app_phone
     data_template:
       title: '{{ title }}'
       message: '{{ message }}'
@@ -91,10 +44,10 @@ open_windows_message_christian:
             name: default
             critical: 1
             volume: 1.0
-open_windows_message_elitsa:
+open_windows_message_eli:
   sequence:
   - condition: state
-    entity_id: person.elitsa
+    entity_id: person.eli
     state: home
   - service: notify.mobile_app_iphone
     data_template:
@@ -931,7 +884,7 @@ wo_ist_elis_handy:
   mode: single
   sequence:
   - data:
-      account: elitsadoncheva@gmail.com
+      account: elidoncheva@gmail.com
       device_name: iPhone
     service: icloud.play_sound
 alexa_good_morning:
@@ -1087,7 +1040,7 @@ parkplatz_senden:
         url: http://maps.apple.com?t=m&z=14&dirflg=w&address={{ state_attr("person.auto",
           "latitude") }},{{ state_attr("person.auto", "longitude") }}
       message: Parkplatz anzeigen
-    service: notify.mobile_app_skysphone
+    service: notify.mobile_app_phone
 morning_cast_eli:
   alias: morning cast Eli
   sequence:
