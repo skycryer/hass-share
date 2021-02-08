@@ -19,16 +19,6 @@ messages_to_christian:
   - service: notify.devices_christian
     data_template:
       message: '{{ message }}'
-backup_server_movie_shutdown:
-  alias: shutdown backup server
-  sequence:
-  - delay:
-      hours: 5
-  - condition: state
-    entity_id: switch.backup_server_filme
-    state: 'on'
-  - service: switch.turn_off
-    entity_id: switch.backup_server_filme
 open_windows_message_christian:
   sequence:
   - condition: state
